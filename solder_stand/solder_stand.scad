@@ -32,10 +32,10 @@ rotate(60)translate([40,0,0])cylinder(d=2.5,h=20,center=true);
 
 module print(){
 spacer();
-translate([-20,-11.5,0]){
+translate([-20,-11.5,0])
 	stand();
-translate([0,0,5+.25])stand();
-}
+translate([30,-11.5,0])rotate(60)stand();
+
 }
 print();
 
