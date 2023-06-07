@@ -34,7 +34,7 @@ module print(){
 spacer();
 translate([-20,-11.5,0]){
 	stand();
-translate([0,0,5+3])stand();
+translate([0,0,5+.25])stand();
 }
 }
 print();
