@@ -1,48 +1,28 @@
 $fa=6;
 $fs=.5;
 
-module spacer(){
-difference(){
-cylinder(d=15,h=35);
-	cylinder(d=2.5,h=80,center=true);
-}
-}
-
-
-module stand(){difference(){
-union(){
-hull(){
-	cylinder(d=5,h=5);
-	translate([40,0,0])cylinder(d=5,h=5);
-}
-rotate(60)hull(){
-	cylinder(d=5,h=5);
-	translate([40,0,0])cylinder(d=5,h=5);
-}
-translate([40,0,0])rotate(120)hull(){
-	cylinder(d=5,h=5);
-	translate([40,0,0])cylinder(d=5,h=5);
-}
+module spacer()linear_extrude(5)difference(){
+    circle(d=18);
+	circle(d=3);
+    translate([0,-5])square([0.5,50]);
 }
 
-translate([20+(30*.5*tan(30)),0,0])rotate([0,30,0])cylinder(d=2.7,h=20,center=true);
-rotate(60)translate([40,0,0])cylinder(d=2.5,h=20,center=true);
+
+module stand(a=50,d=5)linear_extrude(d)difference(){
+    minkowski(){
+        circle(d=a,$fn=3);
+        circle(d=d);
+    }
+    circle(d=a-2*d,$fn=3);
+    for(i=[0:2])rotate(i*120)translate([a/2,0,0])rotate(60){
+        circle(d=2.6);
+        translate([0,-5])square([0.5,10]);
+    }
 }
-}
+    
 
 module print(){
-spacer();
-translate([-20,-11.5,0])
-	stand();
-translate([30,-11.5,0])rotate(60)stand();
-
+    for(i=[0:1])translate([0,i*50,0])spacer();
+    for(i=[0:1])translate([0,i*50,0])stand();
 }
 print();
-
-/*
-_ 00 01 11 10 SR
-0 0  0  x  1
-1 1  0  x  1
-Q
-
-s|(!r&q)*/
