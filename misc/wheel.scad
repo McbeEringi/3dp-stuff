@@ -1,0 +1,14 @@
+d=4.76;n=5;
+$fa=6;$fs=.1;
+linear_extrude(2){
+	difference(){
+		circle(25);
+		circle(22);
+	}
+	difference(){
+		circle(5);
+		circle(d/2);
+		translate([0,-.5])square([100,1]);
+	}
+	for(i=[0:n-1])rotate(360*i/n+180)translate([d/2,-1])square([22-d/2,2]);
+	}
