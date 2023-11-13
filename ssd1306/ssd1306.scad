@@ -1,28 +1,31 @@
 $fa=6;
 $fs=.5;
-
-module hook(){
-	translate([12.75,-1.7,0])linear_extrude(7){
-	square([1,3+1.7]);
-	difference(){
-	rotate(45)square([sqrt(2),sqrt(2)],center=true);
-		translate([-1,0])square();
+/*
+t=0.8;
+module half(){
+linear_extrude(5){
+	translate([0,-t])square([12.7,t]);
+	translate([12.7,-t])square([t,t+3.3+t]);
+	translate([12.7+t,3.3])intersection(){
+		rotate(45)square(3,center=true);
+		scale([-1,1])square([10,t]);
 	}
 }
+linear_extrude(2/sqrt(2))
+	translate([10.5-2/sqrt(2)/2,0])square([2/sqrt(2),3.3]);
+linear_extrude(t)
+	translate([4.5,0]){
+		square([12.7-4.5-t,3.3-1.6-.2]);
+		square([7-4.5,3.3]);
+	}
+}
+half();scale([-1,1])half();
+*/
+
+module main(){
+	linear_extrude(2/sqrt(2))translate([1.2+(2-2/sqrt(2))/2,0])square([2/sqrt(2),5]);
+	linear_extrude(3.5-(2-2/sqrt(2))/2)square([8,2]);
 }
 
-//square([25.5,1.8]);
-intersection(){
-union(){
-difference(){
-	translate([-12.75,0,0])cube([25.5,3,7]);
-	translate([-5,0,0])cube([10,2,7]);
-	translate([-15,0,2])cube([30,2,7]);
-}
-translate([10.5,0,0])rotate([90,0,0])cylinder(d=1.8,h=2);
-translate([-10.5,0,0])rotate([90,0,0])cylinder(d=1.8,h=2);
-hook();
-scale([-1,1,1])hook();
-}
-translate([-25,-15,0])cube([50,30,30]);
-}
+main();
+scale([-1,1])translate([5,0,0])main();
