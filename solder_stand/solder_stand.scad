@@ -1,14 +1,13 @@
 $fa=6;
 $fs=.5;
 
-module spacer()linear_extrude(5)difference(){
-    circle(d=18);
-	circle(d=3);
-    translate([0,-5])square([0.5,50]);
+module spacer()difference(){
+	circle(d=15);
+	circle(d=3.5);
 }
 
 
-module stand(a=50,d=5)linear_extrude(d)difference(){
+module stand(a=50,d=5)difference(){
     minkowski(){
         circle(d=a,$fn=3);
         circle(d=d);
@@ -22,7 +21,6 @@ module stand(a=50,d=5)linear_extrude(d)difference(){
     
 
 module print(){
-    for(i=[0:1])translate([0,i*50,0])spacer();
-    for(i=[0:1])translate([0,i*50,0])stand();
+	linear_extrude(3){spacer();stand();translate([-10,0])square([8,.2]);}
 }
 print();
