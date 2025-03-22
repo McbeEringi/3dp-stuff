@@ -1,0 +1,30 @@
+$fs=.2;
+difference(){
+linear_extrude(2)minkowski(){
+	circle(r=5);
+	square([40,40],center=true);
+}
+translate([0,0,1.001])linear_extrude(1)minkowski(){
+	circle(r=5);
+	square([7,.001],center=true);
+}
+
+}
+translate([0,0,2])linear_extrude(3)difference(){
+	minkowski(){
+		circle(r=10);
+		square([7,.001],center=true);
+	}
+	minkowski(){
+		circle(r=8);
+		square([7,.001],center=true);
+	}
+}
+translate([15,15,2+1/2])rotate([0,90,0])linear_extrude(5)difference(){
+	square([2,5],center=true);
+	minkowski(){
+		circle(d=1);
+		square([.001,1],center=true);
+	}
+	square([3,1],center=true);
+};
