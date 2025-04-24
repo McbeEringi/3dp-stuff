@@ -35,15 +35,16 @@ translate([0,0,-2.5]){
 
 translate([50,0,0])difference(){
 	union(){
-		linear_extrude(.5)minkowski(){square([1e-9,66]);circle(d=6);}
-		cylinder(d=6,h=3);
-		translate([-.5,23,0])cylinder(d=6,h=3.5);
-		translate([-.5,43,0])cylinder(d=6,h=3.5);
-		translate([0,66,0])cylinder(d=6,h=3);
+		linear_extrude(.5)minkowski(){square([1e-9,66],center=true);circle(d=6);}
+		linear_extrude(3.5)minkowski(){square([1e-9,44],center=true);circle(d=6);}
+		translate([0,-33,0])cylinder(d=6,h=3);
+		//translate([-.5,-10,0])cylinder(d=6,h=3.5);
+		//translate([-.5,10,0])cylinder(d=6,h=3.5);
+		translate([0,33,0])cylinder(d=6,h=3);
 	}
-	cylinder(d=3,h=5);
-	translate([-.5,23,0])cylinder(d=3,h=5);
-	translate([-.5,43,0])cylinder(d=3,h=5);
-	translate([0,66,0])cylinder(d=3,h=5);
+	translate([0,-33,0])cylinder(d=3,h=5);
+	translate([-.5,-10,0])cylinder(d=3,h=5);
+	translate([-.5,10,0])cylinder(d=3,h=5);
+	translate([0,33,0])cylinder(d=3,h=5);
 }
 
