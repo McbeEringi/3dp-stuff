@@ -3,8 +3,8 @@ $fs=1;$fa=1;
 function saturate(x)=max(0,min(x,1));
 function smoothstep(a,b,x)=let(x=saturate((x-a)/(b-a)))x*x*(3-2*x);
 
-t=smoothstep(0,1,$t)*90;
-spl=0;//smoothstep(2,1,$t*3);
+t=$t*180;
+spl=1;//smoothstep(2,1,$t*3);
 rot=45;
 
 show_gears=true;
@@ -92,19 +92,6 @@ translate([0,0,-.25]){
 		translate([0,20])square([22,7],center=true);
 		translate([12,32])square([7,22],center=true);
 	}
-	
-	// servo model
-	translate([32,32,5.25])%rotate(135){
-		translate([-10.2-6.8,-10,15])cube([54,20,2.5]);
-		translate([0,0,5])cylinder(r=6.7,h=2);
-		translate([-10.2,-10.2,7])cube([40.4,20.4,38.2]);
-		translate([0,0,-1])cylinder(r=5,h=6);
-		rotate(t){
-			translate([-13/2,-43/2,0])cube([13,43,2.5]);
-			translate([0,13,-5])cylinder(r=1,h=10);
-			translate([0,-13,-5])cylinder(r=1,h=10);
-		}
-	}
 }
 
 // cover
@@ -137,13 +124,91 @@ translate([32,32])rotate(135)translate([10+24.3,0,3.25]){
 	}
 }
 
-// door knob
-translate([0,0,100*spl])scale(1-spl)
-%translate([0,0,72])scale([1,1,-1]){
-	%translate([0,0,-10])linear_extrude(10)circle(200);
+
+module servo(){
+	translate([-10.2-6.8,-10,15])cube([54,20,2.5]);
+	translate([0,0,5])cylinder(r=6.7,h=2);
+	translate([-10.2,-10.2,7])cube([40.4,20.4,38.2]);
+	translate([0,0,-1])cylinder(r=5,h=6);
+	rotate(t){
+		translate([-13/2,-43/2,0])cube([13,43,2.5]);
+		translate([0,13,-5])cylinder(r=1,h=10);
+		translate([0,-13,-5])cylinder(r=1,h=10);
+	}
+}
+module knob(){
 	linear_extrude(5)circle(d=72);
 	linear_extrude(22)circle(d=32);
 	translate([0,0,22])linear_extrude(42)circle(d=52);
 }
 
+// holder
+translate([-75*spl,0,0])rotate(rot)translate([0,0,30])linear_extrude(10)translate([32,32])rotate(45)translate([0,10])
+difference(){
+	intersection(){
+		translate([-12,-22])square([24,42+10]);
+		minkowski(){square([14,50],center=true);circle(5);}
+	}
+	square([20,40],center=true);
+	translate([-1,-30])square([2,30]);
+	translate([ 6,25])circle(1.6);
+	translate([-6,25])circle(1.6);
+}
+
+// spacer_base
+translate([0,75*spl,0])rotate(rot)translate([0,0,40])linear_extrude(20)translate([32,32])rotate(45)translate([0,10+25])
+difference(){
+	minkowski(){square([14,1e-9],center=true);circle(5);}
+	translate([ 6,0])circle(1.6);
+	translate([-6,0])circle(1.6);
+}
+
+
+module mag(){
+	linear_extrude(5)square([20,10],center=true);
+	linear_extrude(15){
+		translate([ 5,0])circle(d=2.5);
+		translate([-5,0])circle(d=2.5);
+	}
+}
+
+//base
+translate([100*spl,0,0])rotate(rot)translate([0,0,60])difference(){
+	linear_extrude(12)difference(){
+		union(){
+			circle(d=96);
+			translate([32,32])difference(){circle(d=88);circle(d=56);}
+		}
+		circle(d=72);
+		translate([-32,-32])rotate(45)square(36,center=true);
+		translate([32,32])rotate(45)translate([0,10+25]){
+			translate([ 6,0])circle(1.6);
+			translate([-6,0])circle(1.6);
+		}
+	}
+	translate([0,0,12-5+.01])linear_extrude(5)translate([32,32])rotate(45)translate([0,10+25]){
+		translate([ 6,0])circle(5);
+		translate([-6,0])circle(5);
+	}
+	for(i=[0:2])rotate(i*360/3-45)translate([0,42,12.01])scale([1,1,-1])mag();
+	translate([32,32])rotate(-45)translate([0,36,12.01])scale([1,1,-1])mag();
+}
+
+
+
+
+
+
+
+// deco
+if(1-spl)translate([0,0,100*spl])scale(1-spl){
+	// servo model
+	rotate(rot)translate([32,32,5])%rotate(135)servo();
+
+	// door knob
+	%translate([0,0,72])scale([1,1,-1]){
+		%translate([0,0,-10])linear_extrude(10)circle(200);
+		knob();
+	}
+}
 
