@@ -4,16 +4,18 @@ function saturate(x)=max(0,min(x,1));
 function smoothstep(a,b,x)=let(x=saturate((x-a)/(b-a)))x*x*(3-2*x);
 
 t=smoothstep(0,1,$t)*90;
-spl=smoothstep(2,1,$t*3);
+spl=1;//smoothstep(2,1,$t*3);
+rot=45;
 
-rotate(45){
+rotate(rot){
 	rotate(t-45){
 		herringbone_gear(2, 20, 3, 32,helix_angle=30,optimized=false);
 		difference(){
 			union(){
 				cylinder(r=16,h=3+5);
-				translate([0,0,3+5])cylinder(r1=16,r2=8,h=2);
+				translate([0,0,3+5])cylinder(r1=16,r2=12,h=2);
 			}
+			translate([0,0,-1])cylinder(r=12,h=12);
 			translate([-3/2,-3/2,-1])cube(19);
 			rotate(180)translate([-3/2,-3/2,-1])cube(19);
 		}
@@ -34,6 +36,10 @@ rotate(45){
 }
 
 
+module window(){
+	circle(16.1);
+	translate([32,32])circle(16.1);
+}
 module gearbb(b,bi){
 	difference(){
 		union(){
@@ -44,16 +50,31 @@ module gearbb(b,bi){
 			}
 			translate([32,32])circle(22+b);
 		}
-		circle(16.1);
-		translate([32,32])circle(16.1);
+		window();
+	}
+}
+module mount(d=0){
+	difference(){
+		translate([32,32])rotate(135)translate([10,0])difference(){
+			square([60,20+d],center=true);
+			translate([24.3,5])circle(2);
+			translate([24.3,-5])circle(2);
+		}
+		window();
 	}
 }
 
-translate([75*spl,0,sin(180*spl)*50])rotate([0,180*spl,0])rotate(45)
+translate([50*spl,0,sin(180*spl)*50])rotate([0,180*spl,0])rotate(rot)
 translate([0,0,-1.25]){
-	translate([0,0,3.5])linear_extrude(1)gearbb(2);
-	linear_extrude(3.5)difference(){
+	translate([0,0,3.5])linear_extrude(1){
 		gearbb(2);
+		mount();
+	}
+	linear_extrude(3.5)difference(){
+		union(){
+			gearbb(2);
+			mount();
+		}
 		gearbb(.2,.1);
 		translate([0,20])square([22,7],center=true);
 		translate([12,32])square([7,22],center=true);
@@ -72,11 +93,22 @@ translate([0,0,-1.25]){
 	}
 }
 
-translate([-75*spl,0,,sin(180*spl)*-50])rotate(45)
+translate([-75*spl,0,sin(180*spl)*-50])rotate(rot)
 translate([0,0,-2.25]){
 	linear_extrude(1)gearbb(4);
 	translate([0,0,1])linear_extrude(4.5)difference(){
 		gearbb(4);
 		gearbb(2.2,2.1);
+		mount(.2);
 	}
 }
+
+translate([0,50*spl,sin(180*spl)*50])rotate(rot)
+translate([32,32])rotate(135)translate([10+24.3,0,3.25]){
+	linear_extrude(16.75)difference(){
+		square([8,20],center=true);
+		translate([0, 5])circle(2.1);
+		translate([0,-5])circle(2.1);
+	}
+}
+
