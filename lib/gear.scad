@@ -15,8 +15,7 @@ module gear(m=5,z=14,n=4,alpha=20,jt=.1){
 	ra=r+m;
 	rf=function(x=1)r-m*(1+df*x);
 
-	f=.5;
-	f_=_atan(m*df*f/rf());
+	f=1;
 	td=2*PI/z;
 	tmax=sqrt((ra/rb)^2-1);
 	tt=td/4+tan(alpha)-d2r(alpha)-_tan(jt/r);
@@ -29,10 +28,8 @@ module gear(m=5,z=14,n=4,alpha=20,jt=.1){
 		for(j=[0:z-1])each let(t=td*j)[
 			for(i=[ 0:n])let(x=ci(i/n*tmax))if(rf(1-f)<norm(x))rot(x,t-tt),
 			for(i=[-n:0])let(x=ci(i/n*tmax))if(rf(1-f)<norm(x))rot(x,t+tt),
-			rot([rf(1-f),0],t+tt),
-			rot([rf(),0],t+tt+f_),
-			rot([rf(),0],t+td-tt-f_),
-			rot([rf(1-f),0],t+td-tt)
+			for(i=[-n:0])let(i=i/n)rot([rf(1-f*-_cos(PI/2*i))+m*.25*f, m*.25*f],t+tt+_atan(m*df*f*+_sin(PI/2*i)/rf())),
+			for(i=[ 0:n])let(i=i/n)rot([rf(1-f*-_cos(PI/2*i))+m*.25*f,-m*.25*f],t+td-tt-_atan(m*df*f*-_sin(PI/2*i)/rf())),
 		]
 	]);
 }
