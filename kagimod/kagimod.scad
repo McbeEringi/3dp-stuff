@@ -11,6 +11,7 @@ show_gears=true;
 show_frame=true;
 show_cover=true;
 show_spacer=true;
+show_deco=false;
 
 txt="ueckoken kagimod @McbeEringi ";
 
@@ -141,27 +142,21 @@ module knob(){
 	linear_extrude(22)circle(d=32);
 	translate([0,0,22])linear_extrude(42)circle(d=52);
 }
+module block(){
+	difference(){
+		minkowski(){square([10,1e-9],center=true);circle(5);}
+		translate([ 5,0])circle(1.7);
+		translate([-5,0])circle(1.7);
+	}
+}
 
 // holder
-translate([-75*spl,0,0])rotate(rot)translate([0,0,30])linear_extrude(10)translate([32,32])rotate(45)translate([0,10])
-difference(){
-	intersection(){
-		translate([-12,-22])square([24,42+10]);
-		minkowski(){square([14,50],center=true);circle(5);}
-	}
-	square([20,40],center=true);
-	translate([-1,-30])square([2,30]);
-	translate([ 6,25])circle(1.6);
-	translate([-6,25])circle(1.6);
+translate([-75*spl,0,0])rotate(rot)translate([0,0,30])linear_extrude(10)translate([32,32])rotate(45)translate([0,10]){
+translate([0,25])#block();
 }
-
 // spacer_base
-translate([0,75*spl,0])rotate(rot)translate([0,0,40])linear_extrude(20)translate([32,32])rotate(45)translate([0,10+25])
-difference(){
-	minkowski(){square([14,1e-9],center=true);circle(5);}
-	translate([ 6,0])circle(1.6);
-	translate([-6,0])circle(1.6);
-}
+translate([0,75*spl,0])rotate(rot)translate([0,0,30])linear_extrude(30)translate([32,32])rotate(45)translate([0,10-25])
+block();
 
 
 module mag(){
@@ -176,22 +171,21 @@ module mag(){
 translate([100*spl,0,0])rotate(rot)translate([0,0,60])difference(){
 	linear_extrude(12)difference(){
 		union(){
-			circle(d=96);
-			translate([32,32])difference(){circle(d=88);circle(d=56);}
+			circle(d=97);
+			translate([32,32])rotate(45)translate([0,10-25])block();
 		}
-		circle(d=72);
+		circle(d=77);
+		translate([32,32])rotate(45)translate([0,10-25]){
+			translate([ 5,0])circle(d=2.5);
+			translate([-5,0])circle(d=2.5);
+		}
 		translate([-32,-32])rotate(45)square(36,center=true);
-		translate([32,32])rotate(45)translate([0,10+25]){
-			translate([ 6,0])circle(1.6);
-			translate([-6,0])circle(1.6);
-		}
 	}
-	translate([0,0,12-5+.01])linear_extrude(5)translate([32,32])rotate(45)translate([0,10+25]){
-		translate([ 6,0])circle(5);
-		translate([-6,0])circle(5);
+	for(i=[0:2])rotate(i*360/3-45)translate([0,87/2,12.01])scale([1,1,-1])mag();
+	translate([0,0,12-5+.01])linear_extrude(5)translate([32,32])rotate(45)translate([0,10-25]){
+		translate([ 5,0])circle(d=8.5);
+		translate([-5,0])circle(d=8.5);
 	}
-	for(i=[0:2])rotate(i*360/3-45)translate([0,42,12.01])scale([1,1,-1])mag();
-	translate([32,32])rotate(-45)translate([0,36,12.01])scale([1,1,-1])mag();
 }
 
 
@@ -201,7 +195,7 @@ translate([100*spl,0,0])rotate(rot)translate([0,0,60])difference(){
 
 
 // deco
-if(1-spl)translate([0,0,100*spl])scale(1-spl){
+if(show_deco&&1-spl)translate([0,0,100*spl])scale(1-spl){
 	// servo model
 	rotate(rot)translate([32,32,5])%rotate(135)servo();
 
