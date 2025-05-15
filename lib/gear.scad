@@ -1,6 +1,6 @@
 $fa=1;$fs=1;
 
-module gear(m=5,z=14,n=4,alpha=20,jt=.1){
+module gear(m=5,z=14, n=4,alpha=20,jt=.1){
 	r2d=function(x)x/PI*180;
 	d2r=function(x)x*PI/180;
 	_sin=function(x)sin(r2d(x));
@@ -43,11 +43,8 @@ linear_extrude(3){
 }
 */
 
-module yamaba()difference(){
-	union(){
-		linear_extrude(1.5,slices=1,twist=2)gear();
-		scale([1,1,-1])linear_extrude(1.5,slices=1,twist=2)gear();
-	}
-	cylinder(r=25,h=5,center=true);
+module yamaba(m=5,z=14,h=5,a=30, n=4,alpha=20,jt=.1){
+	module a(){linear_extrude(h/2,slices=1,twist=atan(h*tan(a)/(z*m)))gear(m,z,n,alpha,jt);}
+	union(){a();mirror([0,0,1])a();}
 }
 yamaba();
