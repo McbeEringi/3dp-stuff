@@ -43,9 +43,3 @@ module assembled(){
 module stack(){for(i=[0:5])translate([0,0,3.2*i])panel();}
 
 panel();
-
-
-/*
-translate([105,125,0]){
-	linear_extrude(3)text(text="あ",font="Zen Maru Gothic");
-}*/
