@@ -1,14 +1,13 @@
 $fs=.2;
 difference(){
-linear_extrude(2)minkowski(){
-	circle(r=5);
-	square([40,40],center=true);
-}
-translate([0,0,1.001])linear_extrude(1)minkowski(){
-	circle(r=5);
-	square([7,.001],center=true);
-}
-
+	linear_extrude(2)minkowski(){
+		circle(r=5);
+		square([40,40],center=true);
+	}
+	translate([0,0,1.01])linear_extrude(1)minkowski(){
+		circle(r=5);
+		square([7,.001],center=true);
+	}
 }
 translate([0,0,2])linear_extrude(3)difference(){
 	minkowski(){
@@ -27,4 +26,26 @@ translate([15,15,2+1/2])rotate([0,90,0])linear_extrude(5)difference(){
 		square([.001,1],center=true);
 	}
 	square([3,1],center=true);
-};
+}
+
+translate([60,0,0])rotate([0,180,0]){
+	difference(){
+		translate([0,0,.01])linear_extrude(50)minkowski(){
+			circle(r=6);
+			square([40,40],center=true);
+		}
+		linear_extrude(48)minkowski(){
+			circle(r=4);
+			square([40,40],center=true);
+		}
+		linear_extrude(2)minkowski(){
+			circle(r=5);
+			square([40,40],center=true);
+		}
+		translate([50/2-1,15,0])rotate([0,90,0])linear_extrude(2)#minkowski(){
+			circle(r=.5);
+			square([5,1],center=true);
+		}
+	}
+
+}
