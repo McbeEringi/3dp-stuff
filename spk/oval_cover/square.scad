@@ -53,7 +53,7 @@ translate([0,0,2]){
 	}
 }
 
-rotate([180,0,0])translate([60,0,2+wire_d/2]){
+translate([60,0,2+wire_d/2])rotate([0,180,0]){
 	difference(){
 		linear_extrude(h-2-wire_d/2-2)difference(){
 			shape();
