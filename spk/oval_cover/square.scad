@@ -1,4 +1,70 @@
 $fs=.2;
+
+wire_d=1;
+h=50;
+wire_x=15;
+
+module speaker(d=0){
+	minkowski(){
+		square([7,.01],center=true);
+		circle(8+d);
+	}
+}
+
+module shape(d=0){
+	minkowski(){
+		square([40,40],center=true);
+		circle(5+d);
+	}
+}
+
+module wire_notch(){
+	minkowski(){
+		translate([-wire_d/2,0])square([wire_d,.01]);
+		circle(d=wire_d);
+	}
+}
+
+
+difference(){
+	linear_extrude(2)shape();
+	translate([0,0,1])linear_extrude(2)speaker(-3);
+}
+translate([0,0,2]){
+	linear_extrude(3)difference(){
+		speaker(2);
+		speaker();
+	}
+	difference(){
+		union(){
+			linear_extrude(wire_d/2)difference(){
+				shape();
+				shape(-2);
+			}
+			linear_extrude(10)difference(){
+				shape(-2);
+				shape(-4);
+			}
+		}
+		translate([0,wire_x,wire_d/2])rotate([90,0,90])linear_extrude(100)union(){
+			wire_notch();
+			translate([-wire_d/2,0])square([wire_d,10]);
+		}
+	}
+}
+
+rotate([180,0,0])translate([60,0,2+wire_d/2]){
+	difference(){
+		linear_extrude(h-2-wire_d/2-2)difference(){
+			shape();
+			shape(-2);
+		}
+		translate([0,wire_x,0])rotate([90,0,90])linear_extrude(100)wire_notch();
+	}
+	translate([0,0,h-2-wire_d/2-2])linear_extrude(2)shape();
+}
+
+/*
 difference(){
 	linear_extrude(2)minkowski(){
 		circle(r=5);
@@ -49,3 +115,4 @@ translate([60,0,0])rotate([0,180,0]){
 	}
 
 }
+*/
