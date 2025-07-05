@@ -1,4 +1,4 @@
-$fs=.2;
+$fs=.5;$fa=1;
 
 wire_d=1;
 h=50;
@@ -33,7 +33,7 @@ difference(){
 translate([0,0,2]){
 	linear_extrude(3)difference(){
 		speaker(2);
-		speaker();
+		speaker(.2);
 	}
 	difference(){
 		union(){
