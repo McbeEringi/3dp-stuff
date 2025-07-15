@@ -13,24 +13,29 @@ module plug(){
 }
 
 module board(){
-	translate([0,0,4])linear_extrude(15.51){
+	translate([0,0,4])linear_extrude(15.5){
 		square([2,10],center=true);
 		rl(3.7,8.6);
 	}
-	translate([.8/2,-7/2,6])cube([4.5-.8/2,7,13.51]);
-	translate([5.2/2,0,19.51])cylinder(d=5.5,h=2);
+	translate([.8/2,-7/2,6])cube([4.5-.8/2,7,13.5]);
+	translate([5.2/2,0,19.5])cylinder(d=5.5,h=2);
 }
 
 module out(){
 	difference(){
 		union(){
-			linear_extrude(19.5)rl(6,12);
-			translate([3/2,0,5])linear_extrude(14.5)rl(6,12,3);
+			linear_extrude(19.49)rl(6,12);
+			translate([3/2,0,5])linear_extrude(14.49)rl(6,12,3);
 		}
 		plug();
 		board();
 	}
 	%translate([10,0,0]){plug();board();}
+	
+	translate([20,0,0])difference(){
+		translate([3/2,0,19.51])linear_extrude(1.98)rl(6,12,3);
+		board();
+	}
 }
 
 out();
