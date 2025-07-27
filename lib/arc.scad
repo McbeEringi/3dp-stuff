@@ -17,11 +17,15 @@ module arc(r,b,t){
 }
 
 // distance arc
-module darc(d,b,t){
+module darc(d,b,t,center,cap){
 	//$fs=b*.2;
 	r=sqrt(d*d/(2*(1-cos(t))));
-	if(r!=1/0) translate([d,0])rotate((180-abs(t))/2*sign(t))translate([-r,0])arc(r,b,t);
-	else translate([0,-b/2])square([d,b]);
-	//circle(d=b);
-	//translate([d,0])circle(d=b,$fs=b*.2);
+	translate([center?-d/2:0,0]){
+		if(r!=1/0)translate([d,0])rotate((180-abs(t))/2*sign(t))translate([-r,0])arc(r,b,t);
+		else translate([0,-b/2])square([d,b]);
+			if(cap){
+			circle(d=b);
+			translate([d,0])circle(d=b,$fs=b*.2);
+		}
+	}
 }
