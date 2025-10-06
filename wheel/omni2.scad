@@ -3,10 +3,10 @@ $fa=1;$fs=1;
 
 d=50;n=5;
 roller_arc_ratio=.52;
-roller_r_max=10/2;
+roller_r_max=10.5/2;
 roller_shaft_r=1.75/2;// d=0.6mm Tin Copper Wire
-roller_shaft_r_asobi=.2;
-plate2floor=.5;
+roller_shaft_r_asobi=.4;
+plate2floor=.8;
 
 
 rot=smoothstep(0,.9,$t)*-360;
@@ -62,7 +62,7 @@ module p2d(wire){intersection(){
 module plate(){
 	difference(){
 		union(){
-			linear_extrude(roller_r_min+roller_shaft_r/2)p2d(0);
+			linear_extrude(roller_r_min+roller_shaft_r/sqrt(2))p2d(0);
 			linear_extrude(roller_r_min+roller_r_max)circle(r=d/4);
 		}
 		linear_extrude(roller_r_min+roller_r_max)circle(r=d/6);
@@ -95,9 +95,10 @@ module main(){
 }
 
 main();
-
+/*
 translate([mix(0,-d/2,print),0,mix(-roller_r_min-roller_r_max,0,print)])linear_extrude((roller_r_min+roller_r_max)*2)difference(){
 	circle(r=d/6);
 	circle(r=d/6-5);
 	translate([-1/2,0])square([1,d]);
 }
+*/
