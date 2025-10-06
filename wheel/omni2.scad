@@ -14,7 +14,7 @@ shaft_snap_l=2;
 hub_d_out=20;
 hub_d_in=17;
 hub_gap=.5;
-hub_key=2;
+hub_key=1.5;
 hub_key_asobi=.2;
 hub_spoke=1;
 
