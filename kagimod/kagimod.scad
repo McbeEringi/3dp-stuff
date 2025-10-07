@@ -4,7 +4,7 @@ function saturate(x)=max(0,min(x,1));
 function smoothstep(a,b,x)=let(x=saturate((x-a)/(b-a)))x*x*(3-2*x);
 
 t=$t*180;
-spl=1;//smoothstep(2,1,$t*3);
+spl=smoothstep(2,1,$t*3);
 rot=45;
 
 show_gears=true;

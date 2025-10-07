@@ -1,37 +1,41 @@
 include <../lib/fn.scad>;
+include <../lib/arc.scad>;
 $fa=1;$fs=1;
 
 d=50;n=5;
 roller_arc_ratio=.55;
 roller_r_max=10.5/2;
 roller_shaft_r=1.75/2;// d=1.75mm filament
-roller_shaft_r_asobi=.3;
-plate2floor=1.2;
-roller_gap_x=1.5;
-roller_gap_y=.2;
-shaft_snap_l=2;
+roller_shaft_r_asobi=.4;
+plate2floor=1;
+roller_gap_x=1;
+roller_gap_y=.3;
+shaft_snap_l=2.5;
+shaft_snap_asobi=.15;
 
 hub_d_out=20;
 hub_d_in=17;
 hub_gap=.5;
 hub_key=1.5;
-hub_key_asobi=.2;
-hub_spoke=1;
+hub_key_asobi=.1;
+hub_spoke=.5;
+hub_shaft_scale=1.07;
 
 
 rot=smoothstep(0,.9,$t)*-360;
-print=smoothstep(.3,.9,$t);
+print=$preview?smoothstep(.3,.9,$t):1;
 
 roller_r_min=roller_r_max-(1-sin(90-180/n*roller_arc_ratio))*d/2;
 roller_h=sin(180/n*roller_arc_ratio)*d;
 echo(min=roller_r_min);
 //assert(roller_r_max*.55<=roller_r_min);
 
-module shaft2d(){
+module shaft2d(hane){
 	intersection(){
 		circle(d=3,$fn=32);
 		translate([.5,0])square([3,3],center=true);
 	}
+	if(hane)translate([-1+.2/2,0])square([.2,3.5],center=true);
 }
 module motor(){
 	linear_extrude(4)shaft2d();
@@ -59,7 +63,7 @@ module roller(){
 	translate([0,0,mix(0,roller_h/2,print)])
 	rotate([mix(90,0,print),0,0]){
 		rotate_extrude()r2d();
-		%rotate_extrude()r2d(1);
+		%rotate_extrude()r2d(.5);
 	}
 }
 
@@ -71,10 +75,16 @@ module p2d(wire){intersection(){
 		}
 	}
 }}
-module plate(key){
+module plate(key=0){
 	difference(){
 		union(){
-			linear_extrude(roller_r_min+roller_shaft_r/sqrt(2))p2d(0);
+			intersection(){
+				linear_extrude(roller_r_min+roller_shaft_r*sqrt(3)/2)p2d(0);
+				rotate_extrude(){
+					translate([d/2-roller_r_max,roller_r_min])circle(r=roller_r_max,$fn=4);
+					square([d/2-roller_r_max,roller_r_min*2]);
+				}
+			}
 			linear_extrude(roller_r_min+roller_r_max)circle(r=d/2-roller_r_max*2-roller_gap_x);
 		}
 		// hub key
@@ -85,7 +95,7 @@ module plate(key){
 		// shaft
 		translate([0,0,roller_r_min])for(i=[0:n-1])
 			rotate(360*(i+.5)/n)translate([d/2-roller_r_max,0,0])
-				rotate([90,0,0])cylinder(r=roller_shaft_r,h=roller_h+(roller_gap_y+shaft_snap_l)*2,center=true,$fn=16);
+				rotate([90,0,0])cylinder(r=roller_shaft_r+shaft_snap_asobi,h=roller_h+(roller_gap_y+shaft_snap_l)*2,center=true,$fn=16);
 	}
 }
 
@@ -120,9 +130,9 @@ module hub(){
 		translate([0,0,roller_r_min+roller_r_max])linear_extrude(roller_r_min+roller_r_max)difference(){
 			union(){
 				circle(3);
-				for(i=[0:n-1])rotate(360*(i+.5)/n)translate([0,-hub_spoke/2])square([hub_d_in/2,hub_spoke]);
+				for(i=[0:n-1])rotate(360*(i+.5)/n)translate([3-hub_spoke/2,-hub_spoke/2])darc(hub_d_in/2-3+hub_spoke,hub_spoke,180,cap=true);
 			}
-			shaft2d();
+			scale(hub_shaft_scale)shaft2d(1);
 			translate([0,-hub_gap/2])square([3,hub_gap]);
 		}
 	}
@@ -139,3 +149,4 @@ module main(){
 }
 
 main();
+//plate();
