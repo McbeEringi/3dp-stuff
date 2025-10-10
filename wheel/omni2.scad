@@ -75,7 +75,7 @@ module p2d(wire){intersection(){
 		}
 	}
 }}
-module plate(key=0){
+module plate(){
 	difference(){
 		union(){
 			intersection(){
@@ -88,9 +88,9 @@ module plate(key=0){
 			linear_extrude(roller_r_min+roller_r_max)circle(r=d/2-roller_r_max*2-roller_gap_x);
 		}
 		// hub key
-		translate([0,0,-.01/2])linear_extrude(roller_r_min+roller_r_max+.01){
+		translate([0,0,-.05/2])linear_extrude(roller_r_min+roller_r_max+.05,twist=90/n){
 			circle(d=hub_d_out);
-			rotate(180/n*key)translate([-(hub_d_out/2+hub_key/2),0])square(hub_key+hub_key_asobi*2,center=true);
+			rotate(180/n)translate([-(hub_d_out/2+hub_key/2),0])square(hub_key+hub_key_asobi*2,center=true);
 		}
 		// shaft
 		translate([0,0,roller_r_min])for(i=[0:n-1])
@@ -99,54 +99,39 @@ module plate(key=0){
 	}
 }
 
-module half(key){
-	translate([0,0,mix(-roller_r_max,0,print)]){
-		// plate
-		translate([mix(0,d/2,print),mix(0,d/2+roller_r_max*2,print),mix(-roller_r_min,0,print)])plate(key);
-
-		// roller
-		for(i=[0:n-1]){
-			i=i+.5;
-			rotate(mix(360*i/n,0,print))translate([
-				mix(d/2-roller_r_max,i*roller_r_max*3,print),
-				mix(0,roller_r_max*1,print),
-				0
-			])roller();
-		}
-
-	}
-}
-
 module hub(){
-	rotate([mix(0,180,print),0,0])translate([mix(0,-d/2,print),0,(roller_r_min+roller_r_max)*mix(-1,-2,print)]){
-		linear_extrude((roller_r_min+roller_r_max)*2)difference(){
-			union(){
-				circle(d=hub_d_out);
-				translate([-hub_d_out/2,0])square([hub_key*2,hub_key],center=true);
-			}
-			circle(d=hub_d_in);
-			translate([hub_d_in/2-1,-hub_gap/2])square([2+(hub_d_out-hub_d_in)/2,hub_gap]);
+	linear_extrude((roller_r_min+roller_r_max)*2,twist=180/n)difference(){
+		union(){
+			circle(d=hub_d_out);
+			translate([-hub_d_out/2,0])square([hub_key*2,hub_key],center=true);
 		}
-		translate([0,0,roller_r_min+roller_r_max])linear_extrude(roller_r_min+roller_r_max)difference(){
-			union(){
-				circle(3);
-				for(i=[0:n-1])rotate(360*(i+.5)/n)translate([3-hub_spoke/2,-hub_spoke/2])darc(hub_d_in/2-3+hub_spoke,hub_spoke,180,cap=true);
-			}
-			scale(hub_shaft_scale)shaft2d(1);
-			translate([0,-hub_gap/2])square([3,hub_gap]);
+		circle(d=hub_d_in);
+		rotate(45/n)translate([hub_d_in/2-1,-hub_gap/2])square([2+(hub_d_out-hub_d_in)/2,hub_gap]);
+	}
+	linear_extrude(roller_r_min+roller_r_max)difference(){
+		union(){
+			circle(3);
+			for(i=[0:n-1])rotate(360*(i+.5)/n)translate([3-hub_spoke/2,-hub_spoke/2])darc(hub_d_in/2-3+hub_spoke,hub_spoke,180,cap=true);
 		}
+		scale(hub_shaft_scale)shaft2d(1);
+		translate([0,-hub_gap/2])square([3,hub_gap]);
 	}
 }
-
 
 module main(){
 	rotate(rot){
-		half(0);
-		translate([0,mix(0,d+roller_r_max*2,print),0])
-			rotate([mix(180,0,print),0,mix(180/n,0,print)])half(1);
-		hub();
+		for(i=[0:2-1])
+			rotate([mix(180*i,0,print),0,mix(180/n*i,0,print)])
+			translate([mix(0,-d/2,print),mix(0,(i+.5)*d,print),mix(-(roller_r_max+roller_r_min),0,print)])
+			plate();
+		for(i=[0:2*n-1])let(j=floor(i/n),k=i%n)
+			rotate(mix(360/n*(k+.5*(j+1)),0,print))
+			translate([mix(d/2-roller_r_max,roller_r_max,print),mix(0,roller_r_max*2.5*(i+.5),print),mix((j*2-1)*roller_r_max,0,print)])
+			roller();
+		rotate([mix(180,0,print),0,0])
+			translate([mix(0,-(hub_d_out/2+hub_key),print),mix(0,-(hub_d_out/2+hub_key),print),(roller_r_min+roller_r_max)*mix(-1,0,print)])
+			hub();
 	}
 }
 
 main();
-//plate();
