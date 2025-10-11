@@ -41,7 +41,8 @@ module motor(){
 	linear_extrude(4)shaft2d();
 	scale(-1){
 		linear_extrude(1)circle(d=4);
-		translate([0,0,1])linear_extrude(24.25)square([12,10],center=true);
+		translate([0,0,1])linear_extrude(9.15)square([12,10],center=true);
+		translate([0,0,10.15])linear_extrude(15.1)intersection(){circle(d=12);square([12,10],center=true);}
 	}
 }
 
@@ -118,7 +119,7 @@ module hub(){
 	}
 }
 
-module main(){
+module omni_main(){
 	rotate(rot){
 		for(i=[0:2-1])
 			rotate([mix(180*i,0,print),0,mix(180/n*i,0,print)])
@@ -134,4 +135,11 @@ module main(){
 	}
 }
 
-main();
+module omni_bb_2d(p=0){
+	translate([-p,-(d+2*p)/2])square([4*roller_r_max+2*p,d+2*p]);
+}
+module omni_bb(p=0){
+	rotate([0,90,0])cylinder(d=d+2*p,h=4*roller_r_max+2*p);
+}
+
+omni_main();
