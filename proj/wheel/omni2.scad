@@ -1,5 +1,5 @@
-include <../lib/fn.scad>;
-include <../lib/arc.scad>;
+include <lib/fn.scad>;
+include <lib/arc.scad>;
 $fa=1;$fs=1;
 
 d=50;n=5;

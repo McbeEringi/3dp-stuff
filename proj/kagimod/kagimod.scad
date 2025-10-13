@@ -1,7 +1,6 @@
-use <../lib/gears.scad>
+include <lib/fn.scad>
+use <lib/gear.scad>
 $fs=1;$fa=1;
-function saturate(x)=max(0,min(x,1));
-function smoothstep(a,b,x)=let(x=saturate((x-a)/(b-a)))x*x*(3-2*x);
 
 t=$t*180;
 spl=smoothstep(2,1,$t*3);
@@ -18,7 +17,7 @@ txt="ueckoken kagimod @McbeEringi ";
 if(show_gears)rotate(rot){
 	// sumturn gear
 	rotate(t+45){
-		herringbone_gear(2, 20, 3, 32,helix_angle=30,optimized=false);
+		yamaba(2,20,32, 3,30);
 		difference(){
 			union(){
 				cylinder(r=16,h=3+5);
@@ -29,10 +28,10 @@ if(show_gears)rotate(rot){
 		}
 	}
 	// idler gear
-	translate([0,32,0])rotate(360/12/2+45-t/12*20)herringbone_gear(2, 12, 3, 16,helix_angle=-30,optimized=false);
+	translate([0,32,0])rotate(360/12/2+45-t/12*20)yamaba(2,12,16, 3,-30);
 	// servo gear
 	translate([32,32,0])rotate(t+45){
-		herringbone_gear(2, 20, 3, 28,helix_angle=30,optimized=false);
+		yamaba(2,20,28, 3,30);
 		linear_extrude(5)intersection(){
 			circle(15);
 			difference(){
