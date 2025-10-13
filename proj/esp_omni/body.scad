@@ -11,16 +11,14 @@ tome_h=10;
 tome_h_asobi=.4;
 tome_o=30;
 d=150;
-tome_tip=[2,3];
+tome_tip=[1,2];
 
 module tomegu(t=thick){
-	tip=[2,3];
-	
 	difference(){
 		union(){
 			circle(d=tome_d);
-			translate([tome_d/2,0,0])scale(-1)square([tome_d,motor.y/2+t+tip.y]);
-			translate([-tome_d/2-tip.x,-(motor.y/2+t+tip.y)])square([tome_d+tip.x*2,tip.y-.01]);
+			translate([tome_d/2,0,0])scale(-1)square([tome_d,motor.y/2+t+tome_tip.y]);
+			translate([-tome_d/2-tome_tip.x,-(motor.y/2+t+tome_tip.y)])square([tome_d+tome_tip.x*2,tome_tip.y-.01]);
 		}
 		intersection(){
 			circle(d=motor.x);
@@ -31,7 +29,7 @@ module tomegu(t=thick){
 }
 
 
-translate([0,0,mix(-thick-10/2,0,print)]){
+#translate([0,0,mix(-thick-10/2,0,print)]){
 	linear_extrude(thick)difference(){
 		circle(d=d);
 		for(i=[0:4-1])rotate(360/4*i){
