@@ -1,5 +1,3 @@
-$fa=1;$fs=1;
-
 // from glsl
 clamp=function(x,a,b)min(max(x,a),b);
 saturate=function(x)clamp(x,0,1);

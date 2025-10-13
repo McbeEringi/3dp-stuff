@@ -138,8 +138,11 @@ module omni_main(){
 module omni_bb_2d(p=0){
 	translate([-p,-(d+2*p)/2])square([4*roller_r_max+2*p,d+2*p]);
 }
-module omni_bb(p=0){
-	rotate([0,90,0])cylinder(d=d+2*p,h=4*roller_r_max+2*p);
+module omni_ph(flip_motor=0){
+	rotate([0,90,0]){
+		cylinder(d=d+2,h=4*roller_r_max);
+		translate([0,0,2*roller_r_max])rotate([flip_motor?180:0,0,90])motor();
+	}
 }
 
 module jigu(){
