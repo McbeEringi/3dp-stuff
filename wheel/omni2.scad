@@ -142,4 +142,16 @@ module omni_bb(p=0){
 	rotate([0,90,0])cylinder(d=d+2*p,h=4*roller_r_max+2*p);
 }
 
+module jigu(){
+	linear_extrude(roller_h+shaft_snap_l*2+roller_gap_y)difference(){
+		square(5,center=true);
+		circle(roller_shaft_r+roller_shaft_r_asobi);
+	}
+	linear_extrude(roller_h)translate([0,5/2])difference(){
+		translate([-5/2,0])square([5,19]);
+		translate([-3/2,(19-17)/2])square([3,17]);
+	}
+}
+
 omni_main();
+//jigu();
