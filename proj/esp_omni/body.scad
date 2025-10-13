@@ -3,7 +3,8 @@ use <omni2.scad>
 $fa=1;$fs=1;
 print=$preview?smoothstep(.3,.9,$t):1;
 
-batt=[50,70];
+batt=[48,68,17.5];
+bread=[46,35];
 motor=[12,10];
 thick=5;
 tome_d=15;
@@ -29,9 +30,10 @@ module tomegu(t=thick){
 }
 
 
-#translate([0,0,mix(-thick-10/2,0,print)]){
+#translate([0,0,mix(motor.y/2,0,print)]){
 	linear_extrude(thick)difference(){
 		circle(d=d);
+		square(bread,center=true);
 		for(i=[0:4-1])rotate(360/4*i){
 			translate([d/2,0]){
 				scale(-1)omni_bb_2d(2);
@@ -40,19 +42,19 @@ module tomegu(t=thick){
 					o=[-s.x/2,-(tome_d+tome_h_asobi)/2];
 					translate(o)square(s);
 					scale([1,-1])translate(o)square(s);
+					translate([-tome_h,tome_d])circle(d=7);
 				}
 			}
 		}
+		translate([-batt.x/2,-batt.y/2])square([20,12]);
 	}
-	translate([0,0,thick])linear_extrude(5)difference(){
-		rotate(atan(batt.y/batt.x))square([100,20],center=true);
-		square(batt,center=true);
-	}
+	linear_extrude(1)square([bread.x/3,bread.y],center=true);
 }
+	%translate([0,0,motor.y/2-batt.z/2-1])cube(batt,center=true);
 
 
-for(i=[0:4-1])rotate(360/4*i){
-	translate([mix(d/2-tome_o-tome_h/2,d/2,print),0,0])rotate([mix(90,0,print),0,mix(90,0,print)])linear_extrude(tome_h)tomegu();
+for(i=[0:4-1])rotate(mix(360/4*i,0,print)){
+	translate([mix(d/2-tome_o-tome_h/2,d*.6,print),mix(0,i*(tome_d+1),print),0])rotate([mix(-90,0,print),0,-90])linear_extrude(tome_h)tomegu();
 
 	translate([d/2,0])scale(-1)%omni_ph($fn=16,flip_motor=true);
 }
