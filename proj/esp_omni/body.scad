@@ -10,21 +10,21 @@ tome_d=15;
 tome_h=10;
 tome_h_asobi=.4;
 tome_o=30;
+tome_btm=[5,2];
 d=150;
-tome_tip=[1,2];
 
 module tomegu(t=thick){
 	difference(){
 		union(){
 			circle(d=tome_d);
-			translate([tome_d/2,0,0])scale(-1)square([tome_d,motor.y/2+t+tome_tip.y]);
-			translate([-tome_d/2-tome_tip.x,-(motor.y/2+t+tome_tip.y)])square([tome_d+tome_tip.x*2,tome_tip.y-.01]);
+			translate([tome_d/2,0])scale(-1)square([tome_d,motor.y/2+t+tome_btm.y]);
 		}
 		intersection(){
 			circle(d=motor.x);
 			square(motor,center=true);
 		}
-		translate([motor.x/2,-motor.y/2*.8,0])scale(-1)square([motor.x,tome_d]);
+		translate([-tome_d/2,motor.y/2*.9])square([tome_d,t]);
+		translate([tome_btm.x/2,-motor.y/2])scale(-1)square([tome_btm.x,t]);
 	}
 }
 
@@ -36,9 +36,10 @@ module tomegu(t=thick){
 			translate([d/2,0]){
 				scale(-1)omni_bb_2d(2);
 				translate([-tome_o,0]){
-					s=[tome_h+tome_h_asobi,sqrt(((tome_d-motor.x)/2+tome_tip.x)^2+tome_tip.y^2)];
-					translate([-s.x/2,-tome_d/2])square(s);
-					scale([1,-1])translate([-s.x/2,-tome_d/2])square(s);
+					s=[tome_h+tome_h_asobi,(tome_d-tome_btm.x)/2+tome_h_asobi];
+					o=[-s.x/2,-(tome_d+tome_h_asobi)/2];
+					translate(o)square(s);
+					scale([1,-1])translate(o)square(s);
 				}
 			}
 		}
