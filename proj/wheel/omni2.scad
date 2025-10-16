@@ -19,7 +19,7 @@ hub_gap=.5;
 hub_key=1.5;
 hub_key_asobi=.1;
 hub_spoke=.5;
-hub_shaft_scale=1.07;
+hub_shaft_scale=1.05;
 
 
 rot=smoothstep(0,.9,$t)*-360;
@@ -101,13 +101,13 @@ module plate(){
 }
 
 module hub(){
-	linear_extrude((roller_r_min+roller_r_max)*2,twist=180/n)difference(){
-		union(){
-			circle(d=hub_d_out);
-			translate([-hub_d_out/2,0])square([hub_key*2,hub_key],center=true);
-		}
+	linear_extrude((roller_r_min+roller_r_max)*2,twist=180/n){
+		translate([-hub_d_out/2,0])square([hub_key*2,hub_key],center=true);
+	}
+	linear_extrude((roller_r_min+roller_r_max)*2)difference(){
+		circle(d=hub_d_out);
 		circle(d=hub_d_in);
-		rotate(45/n)translate([hub_d_in/2-1,-hub_gap/2])square([2+(hub_d_out-hub_d_in)/2,hub_gap]);
+		translate([hub_d_in/2-1,-hub_gap/2])square([2+(hub_d_out-hub_d_in)/2,hub_gap]);
 	}
 	linear_extrude(roller_r_min+roller_r_max)difference(){
 		union(){
