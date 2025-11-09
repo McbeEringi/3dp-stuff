@@ -6,7 +6,7 @@ ring_h=5;
 koma_r=50/3;
 koma_a=2;
 wall_t=2;
-wire_d=2.5;
+wire_d=1.1;
 
 module koma(r=koma_r,a=koma_a,dir){
 	if(!dir||dir=="up")cylinder(h=a,r1=r,r2=r-a);
