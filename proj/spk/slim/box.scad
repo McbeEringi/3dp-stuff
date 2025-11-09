@@ -6,7 +6,9 @@ ring_h=5;
 koma_r=50/3;
 koma_a=2;
 wall_t=2;
-wire_d=1.1;
+wire_d=1.3;
+spk_asobi=.2;
+ring_asobi=.2;
 
 module koma(r=koma_r,a=koma_a,dir){
 	if(!dir||dir=="up")cylinder(h=a,r1=r,r2=r-a);
@@ -22,12 +24,12 @@ module spk(o=0){
 	}
 }
 module ring(){linear_extrude(ring_h)difference(){
-	spk();
+	spk(spk_asobi);
 	minkowski(){
 		square([70-15*2,1e-9],center=true);
-		circle(r=13);
+		circle(r=13+ring_asobi);
 	}
-	translate([-1/2,0])square([1,30]);
+	//translate([-1/2,0])square([1,30]);
 }}
 
 module panel(){
@@ -56,7 +58,7 @@ module front(){
 		}
 	}
 	translate([0,0,koma_a]){
-		linear_extrude(3+ring_h)difference(){spk(wall_t);spk();}
+		linear_extrude(3+ring_h)difference(){spk(wall_t+spk_asobi);spk(spk_asobi);}
 	}
 }
 module middle(){difference(){
@@ -73,8 +75,6 @@ module back(){
 		translate([0,0,koma_a]){
 			wire();
 			scale([-1,1,1])wire();
-			scale([1,-1,1])wire();
-			scale([-1,-1,1])wire();
 		}
 	}
 }
