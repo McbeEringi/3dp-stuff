@@ -38,7 +38,7 @@ module front(){
 			offset(koma_r  )square([size.x-koma_r*2,size.y-koma_r*2],center=true);
 			offset(koma_r-koma_a)square([size.x-koma_r*2,size.y-koma_r*2],center=true);
 		}
-		translate([0,0,size.z-koma_a*2-wire_d*2]){
+		translate([0,0,size.z-koma_a*2-wire_d*3]){
 			wire();
 			rotate(90)wire();
 		}
