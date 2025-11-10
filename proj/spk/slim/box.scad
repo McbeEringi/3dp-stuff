@@ -2,8 +2,9 @@ include <lib/fn.scad>
 $fa=1;$fs=1;
 print=smoothstep(1,0,$t);
 
+size=[100,50];
 ring_h=5;
-koma_r=50/3;
+koma_r=size.y/3;
 koma_a=2;
 wall_t=2;
 wire_d=1.3;
@@ -34,16 +35,16 @@ module ring(){linear_extrude(ring_h)difference(){
 
 module panel(){
 	minkowski(){
-		translate([0,0,koma_a])cube([100-koma_r*2,50-koma_r*2,1e-9],center=true);
+		translate([0,0,koma_a])cube([size.x-koma_r*2,size.y-koma_r*2,1e-9],center=true);
 		koma(dir="down");
 	}
 	translate([0,0,koma_a])linear_extrude(10)difference(){
-		offset(koma_r-koma_a  )square([100-koma_r*2,50-koma_r*2],center=true);
-		offset(koma_r-koma_a*2)square([100-koma_r*2,50-koma_r*2],center=true);
+		offset(koma_r-koma_a  )square([size.x-koma_r*2,size.y-koma_r*2],center=true);
+		offset(koma_r-koma_a*2)square([size.x-koma_r*2,size.y-koma_r*2],center=true);
 	}
 }
 module wire(){
-	translate([(100-50)/2,0,wire_d/2])rotate([0,-90,-135])linear_extrude(50)minkowski(){
+	translate([(size.x-size.y)/2,0,wire_d/2])rotate([0,-90,-135])linear_extrude(50)minkowski(){
 		square([50,1e-9]);
 		circle(d=wire_d);
 	}
@@ -63,8 +64,8 @@ module front(){
 }
 module middle(){difference(){
 	linear_extrude(50-koma_a*2)difference(){
-		offset(koma_r)square([100-koma_r*2,50-koma_r*2],center=true);
-		offset(koma_r-koma_a)square([100-koma_r*2,50-koma_r*2],center=true);
+		offset(koma_r)square([size.x-koma_r*2,size.y-koma_r*2],center=true);
+		offset(koma_r-koma_a)square([size.x-koma_r*2,size.y-koma_r*2],center=true);
 	}
 	translate([0,0,wire_d*2])scale([1,1,-1])wire();
 	translate([0,0,50-koma_a*2-wire_d*2])wire();
