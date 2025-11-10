@@ -1,118 +1,64 @@
-$fs=.5;$fa=1;
+include <lib/fn.scad>;
+$fa=1;$fs=1;
+print=smoothstep(1,0,$t);
 
+size=[50,50,50];
+koma_r=size.x/3;
+koma_a=2;
 wire_d=1;
-h=50;
-wire_x=15;
 
-module speaker(d=0){
+module koma(r=koma_r,a=koma_a){scale([1,1,-1])cylinder(h=a,r1=r,r2=r-a);}
+module spk(o=0){minkowski(){
+	square([7,1e-9],center=true);
+	circle(r=8+o);
+}}
+
+module plate(){
 	minkowski(){
-		square([7,.01],center=true);
-		circle(8+d);
+		cube([size.x-koma_r*2,size.y-koma_r*2,1e-9],center=true);
+		koma();
 	}
 }
-
-module shape(d=0){
-	minkowski(){
-		square([40,40],center=true);
-		circle(5+d);
-	}
-}
-
-module wire_notch(){
-	minkowski(){
-		translate([-wire_d/2,0])square([wire_d,.01]);
+module wire(){
+	translate([0,0,wire_d/2])rotate([90,0,45])linear_extrude(50)minkowski(){
+		square([1e-9,50]);
 		circle(d=wire_d);
 	}
 }
 
-
-difference(){
-	linear_extrude(2)shape();
-	translate([0,0,1])linear_extrude(2)speaker(-3);
-}
-translate([0,0,2]){
-	linear_extrude(3)difference(){
-		speaker(2);
-		speaker(.2);
+module front(){
+	difference(){
+		plate();
+		translate([0,0,-1])linear_extrude(2)spk(-3);
 	}
+	linear_extrude(3)difference(){spk(2);spk(.2);}
+
+	difference(){
+		linear_extrude(size.z-koma_a*2)difference(){
+			offset(koma_r  )square([size.x-koma_r*2,size.y-koma_r*2],center=true);
+			offset(koma_r-koma_a)square([size.x-koma_r*2,size.y-koma_r*2],center=true);
+		}
+		translate([0,0,size.z-koma_a*2-wire_d*2]){
+			wire();
+			rotate(90)wire();
+		}
+	}
+}
+module back(){
 	difference(){
 		union(){
-			linear_extrude(wire_d/2)difference(){
-				shape();
-				shape(-2);
-			}
+			plate();
 			linear_extrude(10)difference(){
-				shape(-2);
-				shape(-4);
+				offset(koma_r-koma_a  )square([size.x-koma_r*2,size.y-koma_r*2],center=true);
+				offset(koma_r-koma_a*2)square([size.x-koma_r*2,size.y-koma_r*2],center=true);
 			}
 		}
-		translate([0,wire_x,wire_d/2])rotate([90,0,90])linear_extrude(100)union(){
-			wire_notch();
-			translate([-wire_d/2,0])square([wire_d,10]);
-		}
+		wire();
 	}
 }
 
-translate([60,0,2+wire_d/2])rotate([0,180,0]){
-	difference(){
-		linear_extrude(h-2-wire_d/2-2)difference(){
-			shape();
-			shape(-2);
-		}
-		translate([0,wire_x,0])rotate([90,0,90])linear_extrude(100)wire_notch();
-	}
-	translate([0,0,h-2-wire_d/2-2])linear_extrude(2)shape();
+module main(){
+	translate([0,0,mix(0,koma_a,print)])front();
+	translate([0,mix(0,(size.y+10),print),mix(size.z-koma_a*2,0,print)])rotate([mix(180,0,print),0,0])back();
 }
-
-/*
-difference(){
-	linear_extrude(2)minkowski(){
-		circle(r=5);
-		square([40,40],center=true);
-	}
-	translate([0,0,1.01])linear_extrude(1)minkowski(){
-		circle(r=5);
-		square([7,.001],center=true);
-	}
-}
-translate([0,0,2])linear_extrude(3)difference(){
-	minkowski(){
-		circle(r=10);
-		square([7,.001],center=true);
-	}
-	minkowski(){
-		circle(r=8);
-		square([7,.001],center=true);
-	}
-}
-translate([15,15,2+1/2])rotate([0,90,0])linear_extrude(5)difference(){
-	square([2,5],center=true);
-	minkowski(){
-		circle(d=1);
-		square([.001,1],center=true);
-	}
-	square([3,1],center=true);
-}
-
-translate([60,0,0])rotate([0,180,0]){
-	difference(){
-		translate([0,0,.01])linear_extrude(50)minkowski(){
-			circle(r=6);
-			square([40,40],center=true);
-		}
-		linear_extrude(48)minkowski(){
-			circle(r=4);
-			square([40,40],center=true);
-		}
-		linear_extrude(2)minkowski(){
-			circle(r=5);
-			square([40,40],center=true);
-		}
-		translate([50/2-1,15,0])rotate([0,90,0])linear_extrude(2)#minkowski(){
-			circle(r=.5);
-			square([5,1],center=true);
-		}
-	}
-
-}
-*/
+main();
