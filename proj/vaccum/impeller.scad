@@ -10,13 +10,13 @@ T_PLATE=2;
 
 // blade params
 CLOCK_WISE=true;
-NUM_BLADE=10;
+NUM_BLADE=12;
 T_BLADE=1;
 H_BLADE=13;
 R1=15;
 R2=30;
-B1=30;
-B2=110;
+B1=60;
+B2=30;
 
 
 isNaN=function(x)x!=x;
