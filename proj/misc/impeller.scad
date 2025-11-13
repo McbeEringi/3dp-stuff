@@ -1,58 +1,45 @@
+$fa=1;$fs=1;
 include <lib/arc.scad>;
-$fa=.5;
-PI=3.1415;
 
-cover=1;
-b=1;// thicknss
+// plate params
+T_PLATE=2;
 
-ds=2.5;// shaft diamiter
-hs=10;// shaft length
-
-n=8;// num blade
-at=30;// blade arc theta
-
-th=20;// corn section height
-ch=10;// cylinder section height
-r2=15;// top radius
-r1=40;// bottom radius
-
-tw=0;// twist
+// blade params
+CLOCK_WISE=true;
+NUM_BLADE=10;
+T_BLADE=2;
+H_BLADE=10;
+R1=20;
+R2=40;
+B1=30;
+B2=110;
 
 
-bb=b/sin(atan((th+ch)/(r1*2*PI/360*tw)));// blade thickness
-//darc(d=10,b=1,t=60);
+module hub(){linear_extrude(5)difference(){
+	circle(d=15);
+	circle(d=5);
+}}
 
-difference(){
-	union(){
-		linear_extrude(b)circle(r1);// base
-		translate([0,0,b]){
-			intersection(){
-				union(){// shape
-					cylinder(h=ch,r=r1);
-					translate([0,0,ch])cylinder(th,r1,r2);
-				}
-				union(){// blades
-					linear_extrude(th+ch,twist=-tw)for(i=[1:n])rotate(i/n*360)difference(){
-						darc(d=r1,b=bb,t=at);
-						circle(r2);
-					}
-					linear_extrude(th+ch,twist=-tw)for(i=[1:n])rotate((i+.5)/n*360)difference(){
-						darc(d=r1,b=bb,t=at);
-						circle(r2+(r1-r2)/2);
-					}
-					if(cover)translate([0,0,ch-b])difference(){// cover
-						cylinder(h=th+b,r=r1);
-						cylinder(th+b,r1,r1-(r1-r2)/th*(th+b));
-						cylinder(h=th+b,r=r2);
-					}
-				}
-			}
-			cylinder(th,r1,0);// inner
-		}
+module plate(){linear_extrude(T_PLATE)difference(){
+	circle(r=R2);
+	circle(d=10);
+}}
+
+module blade(){
+	function sins(a,b,A)=a*sin(180-A-asin(sin(A)/a*b))/sin(A);// return c;
+
+	curve=90-B2-B1;
+	theta=90+B1-curve/2;
+	d=sins(R2-T_BLADE/2,R1+T_BLADE/2,theta);
+
+	linear_extrude(T_PLATE+H_BLADE)for(i=[0:NUM_BLADE-1])rotate(360/NUM_BLADE*i){
+		translate([R1+T_BLADE/2,0,0])rotate(theta-180)darc(d=d,b=T_BLADE,t=curve,cap=true);
 	}
-	cylinder(th-b,r1-b*2,0);// inner
 }
-difference(){// shaft
-	cylinder(h=max(hs,th-b),r=4);
-	cylinder(d=ds,h=hs,$fa=1,$fs=.5);
+
+module main(){
+	hub();
+	plate();
+	scale([CLOCK_WISE?-1:1,1,1])blade();
 }
+main();
