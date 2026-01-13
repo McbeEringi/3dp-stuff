@@ -68,7 +68,7 @@ module impeller(){
 	plate();
 	scale([CLOCK_WISE?-1:1,1,1])linear_extrude(T_PLATE+H_BLADE)blade(R1,R2,B1,B2,NUM_BLADE,T_BLADE);
 }
-//impeller();
+impeller();
 
 
 
@@ -96,7 +96,7 @@ module case(t){
 			scale([1,CLOCK_WISE?-1:1,1])square([R4+D_DUCT+t,R4+D_DUCT]);
 		}
 		volute(); 
-		cylinder(r=R4,h=H_BLADE+T_PLATE,center=true);
+		cylinder(r=R4+D_DUCT/4,h=H_BLADE+T_PLATE,center=true);
 		cylinder(r=R3,h=D_DUCT+t*2+1,center=true);
 	}
 }
