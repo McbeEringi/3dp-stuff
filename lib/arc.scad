@@ -3,17 +3,16 @@ r: radius
 b: thickness
 t: theta
 */
-include <fn.scad>;
 
 module arc(r,b,t,cap,n){
 	if(n){
-		r1=r-b/2;
-		r2=r+b/2;
+		hb=b/2;r1=r-hb;r2=r+hb;
+		rot=function(p,t)let(s=sin(t),c=cos(t))[c*p.x-s*p.y,s*p.x+c*p.y];
 		polygon([
 			for(i=[0:n])let(_t=t*i/n)[r2*cos(_t),r2*sin(_t)],
-			if(cap)for(i=[1:cap])let(_t=180*i/(cap+1))rot([r+b/2*cos(_t),b/2*sin(_t)*sign(t)],d2r(t)),
+			if(cap)for(i=[1:cap])let(_t=180*i/(cap+1))rot([r+hb*cos(_t),hb*sin(_t)*sign(t)],t),
 			for(i=[0:n])let(_t=t*(n-i)/n)[r1*cos(_t),r1*sin(_t)],
-			if(cap)for(i=[1:cap])let(_t=180*i/(cap+1)+180)[r+b/2*cos(_t),b/2*sin(_t)*sign(t)]
+			if(cap)for(i=[1:cap])let(_t=180*i/(cap+1)+180)[r+hb*cos(_t),hb*sin(_t)*sign(t)]
 		]);
 	}else{
 		//$fs=b*.2;

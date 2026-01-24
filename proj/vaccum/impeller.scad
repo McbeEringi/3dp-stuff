@@ -1,4 +1,4 @@
-$fa=1;$fs=1;
+$fa=1;$fs=.5;
 use <lib/arc.scad>;
 include <lib/fn.scad>;
 
@@ -96,7 +96,7 @@ module case(t=T_CASE,hole_r=R5){
 			scale([1,CLOCK_WISE?-1:1,1])square([R4+D_DUCT+t,R4+D_DUCT]);
 		}
 		volute(); 
-		translate([R4+D_DUCT/2,.5,0])rotate([90,0,0])cylinder(r=D_DUCT/2,h=R4+D_DUCT+1);
+		translate([R4+D_DUCT/2,.5,0])rotate([90,0,0])cylinder(r=D_DUCT/2,h=R4+D_DUCT+1,$fn=NUM_VOLUTE);
 		cylinder(r=R4+D_DUCT/(2*sqrt(RATIO_VOLUTE)),h=H_BLADE,center=true);
 		cylinder(r=hole_r,h=D_DUCT+t*2+1,center=true);
 	}
