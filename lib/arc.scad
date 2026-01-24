@@ -10,9 +10,9 @@ module arc(r,b,t,cap,n){
 		rot=function(p,t)let(s=sin(t),c=cos(t))[c*p.x-s*p.y,s*p.x+c*p.y];
 		polygon([
 			for(i=[0:n])let(_t=t*i/n)[r2*cos(_t),r2*sin(_t)],
-			if(cap)for(i=[1:cap])let(_t=180*i/(cap+1))rot([r+hb*cos(_t),hb*sin(_t)*sign(t)],t),
+			if(cap)for(i=[1:cap])let(_t=sign(t)*180*i/(cap+1))rot([r+hb*cos(_t),hb*sin(_t)],t),
 			for(i=[0:n])let(_t=t*(n-i)/n)[r1*cos(_t),r1*sin(_t)],
-			if(cap)for(i=[1:cap])let(_t=180*i/(cap+1)+180)[r+hb*cos(_t),hb*sin(_t)*sign(t)]
+			if(cap)for(i=[1:cap])let(_t=sign(t)*(180*i/(cap+1)+180))[r+hb*cos(_t),hb*sin(_t)]
 		]);
 	}else{
 		//$fs=b*.2;
