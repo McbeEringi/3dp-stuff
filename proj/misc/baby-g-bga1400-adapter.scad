@@ -1,0 +1,15 @@
+$fa=1;$fs=.1;
+dist=9;
+difference(){
+	linear_extrude(21,center=true)difference(){
+		hull(){
+			circle(d=5);
+			translate([dist,0])circle(d=3);
+			//translate([dist,0])square(3/2);
+		}
+		circle(d=3.2);
+		translate([dist,0])circle(d=1);
+	}
+	linear_extrude(10.5,center=true)square(4*2,center=true);
+	linear_extrude(18,center=true)translate([dist,0])square(3*2,center=true);
+}

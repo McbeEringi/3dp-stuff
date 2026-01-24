@@ -1,5 +1,5 @@
-$fa=1;$fs=.5;
-include <lib/arc.scad>;
+$fa=1;$fs=1;
+use <lib/arc.scad>;
 include <lib/fn.scad>;
 
 print=0;
@@ -30,6 +30,7 @@ B4=25;
 NUM_TURBINE=12;
 T_TURBINE=1;
 
+R5=R4+.1;
 NUM_VOLUTE=32;
 RATIO_VOLUTE=4;
 T_CASE=2;
@@ -41,16 +42,6 @@ sins_B=function(a,b,A)asin(sin(A)/a*b);
 sins_C=function(a,b,A)180-A-sins_B(a,b,A);
 sins_c=function(a,b,A)a*sin(sins_C(a,b,A))/sin(A);
 
-
-module hub(){linear_extrude(H_HUB)difference(){
-	circle(d=D2_HUB);
-	circle(d=D1_HUB);
-}}
-module plate(){linear_extrude(T_PLATE)difference(){
-	circle(r=R2);
-	circle(d=D1_HUB);
-}}
-
 module blade(r1,r2,b1,b2,n,t){
 	B2err=function(x)(90-sins_B(r2-t/2,r1+t/2,90+b1-x/2)-x/2)-b2;
 	newton=function(n=10,x=0,d=.1)let(a=B2err(x),b=B2err(x+d),y=x-d/(b-a)*a)a&&n-1?newton(n-1,y):y;
@@ -60,19 +51,20 @@ module blade(r1,r2,b1,b2,n,t){
 		r2-r1-t
 	);
 	for(i=[0:n-1])rotate(360/n*i){
-		translate([r1+t/2,0,0])rotate(-90+b1-curve/2)darc(d=d,b=t,t=curve,cap=true);
+		translate([r1+t/2,0,0])rotate(-90+b1-curve/2)darc(d=d,b=t,t=curve,cap=8,n=16);
 	}
 }
 
 module impeller(){
-	hub();
-	plate();
-	scale([CLOCK_WISE?-1:1,1,1])linear_extrude(T_PLATE+H_BLADE)blade(R1,R2,B1,B2,NUM_BLADE,T_BLADE);
+	translate([0,0,-T_PLATE]){
+		linear_extrude(H_HUB)difference(){circle(d=D2_HUB);circle(d=D1_HUB);}
+		linear_extrude(T_PLATE)difference(){circle(r=R2);circle(d=D1_HUB);}
+	}
+	linear_extrude(H_BLADE)scale([CLOCK_WISE?-1:1,1])blade(R1,R2,B1,B2,NUM_BLADE,T_BLADE);
 }
 module turbine(){
-	h=T_CASE+(D_DUCT-H_BLADE-T_PLATE)/2;
-	translate([0,0,h])linear_extrude(H_BLADE+T_PLATE)scale([CLOCK_WISE?1:-1,1,1])blade(R3,R4,B3,B4,NUM_TURBINE,T_TURBINE);
-	linear_extrude(h)difference(){
+	linear_extrude(H_BLADE)scale([CLOCK_WISE?1:-1,1])blade(R3,R4,B3,B4,NUM_TURBINE,T_TURBINE);
+	scale([1,1,-1])linear_extrude((D_DUCT+T_CASE*2-H_BLADE)/2)difference(){
 		circle(r=R4);
 		circle(r=R3);
 	}
@@ -97,7 +89,7 @@ module volute(ri=R4,out_d=D_DUCT,ratio=RATIO_VOLUTE){
 			for(i=[0:n-1])let(ii=(i+1)%n)[nj+ii,nj+i,njj+i,njj+ii],
 	]);
 }
-module case(t=T_CASE,hole_r=R4){
+module case(t=T_CASE,hole_r=R5){
 	difference(){
 		translate([0,0,-D_DUCT/2-t])linear_extrude(D_DUCT/2+t){
 			circle(R4+D_DUCT+t);
@@ -105,13 +97,15 @@ module case(t=T_CASE,hole_r=R4){
 		}
 		volute(); 
 		translate([R4+D_DUCT/2,.5,0])rotate([90,0,0])cylinder(r=D_DUCT/2,h=R4+D_DUCT+1);
-		cylinder(r=R4+D_DUCT/(2*sqrt(RATIO_VOLUTE)),h=H_BLADE+T_PLATE,center=true);
+		cylinder(r=R4+D_DUCT/(2*sqrt(RATIO_VOLUTE)),h=H_BLADE,center=true);
 		cylinder(r=hole_r,h=D_DUCT+t*2+1,center=true);
 	}
 }
 
-translate([0,0,-(H_BLADE+T_PLATE)/2])impeller();
-translate([0,0,-D_DUCT/2-T_CASE-1e-2])turbine();
+translate([0,0,-H_BLADE/2]){
+	impeller();
+	turbine();
+}
 case();
 //scale([1,1,-1])case(hole_r=D_DUCT/2);
 
