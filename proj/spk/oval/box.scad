@@ -33,9 +33,15 @@ module wall(o=0,t=wall_t){
 
 module wire(){
 	translate([-size.x/2,8,0])rotate([90,0,90])
-	linear_extrude(wall_t*10,center=true){
-		minkowski(){square([wire_d,1e-3],center=true);circle(d=wire_d,$fs=.1);}
-		translate([-wire_d/2,0])square([wire_d,20]);
+	linear_extrude(wall_t*6,center=true){
+		minkowski(){
+			union(){
+				square([1e-3,5]);
+				square([wire_d,1e-3],center=true);
+			}
+			circle(d=wire_d,$fs=.1);
+		}
+		translate([-.1/2,0])square([.1,20]);
 	}
 }
 module front_spk(){
