@@ -1,40 +1,30 @@
 $fa=1;$fs=.1;
-hole=false;
-fin=false;
+
 r=.5;
-WIDTH=21;
-DIST=9;
+DIST=8;
 
-D1_OUT=5;
-D1_IN=3.2;
-W1=4;
-H1=10.5;
-D2_OUT=3;
-D2_IN=1;
-W2=3;
-H2=18;
+A_D1=3.2;
+A_D2=5;
+A_W1=10.4;
+A_W2=21;
+A_H=4;
+B_D1=1;
+B_D2=3;
+B_W1=14;
+B_W2=19;
+B_H=2;
+B_THETA=30;
 
-module rsq(s,r=r){minkowski(){square([s.x-r*2,s.y-r*2],center=true);circle(r);}}
 
 difference(){
-	linear_extrude(WIDTH,center=true)difference(){
-		union(){
-			hull(){
-				circle(d=D1_OUT);
-				translate([DIST,0])circle(d=D2_OUT);
-			}
-			if(fin)translate([DIST,0])rotate(-atan((D1_OUT-D2_OUT)*.5/DIST))square(D2_OUT/2);
-		}
-		if(hole){
-			circle(d=D1_IN);
-			translate([DIST,0])circle(d=D2_IN);
-		}
+	hull(){
+		cylinder(d=A_D2,h=A_W2,center=true);
+		translate([DIST,0,0])cylinder(d=B_D2,h=B_W2,center=true);
 	}
-	if(!hole)for(s=[1,-1])for(x=[0,DIST]){
-		translate([x,0,s*WIDTH*.5])sphere(d=1);
-	}
-	rotate([90,0,0])linear_extrude(D1_OUT,center=true){
-			rsq([W1*2,H1]);
-			translate([DIST,0])rsq([W2*2,H2]);
+	cylinder(d=A_D1,h=A_W2*1.1,center=true);
+	minkowski(){cylinder(r=A_H-r,h=A_W1-r*2,center=true);sphere(r=r);}
+	translate([DIST,0,0]){
+		cylinder(d=B_D1,h=B_W2*1.1,center=true);
+		rotate(B_THETA)minkowski(){cube([(B_H-r)*2,A_D2*2/cos(B_THETA),B_W1-r*2],center=true);sphere(r=r);}
 	}
 }
