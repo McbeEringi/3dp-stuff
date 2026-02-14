@@ -20,6 +20,7 @@ difference(){
 	hull(){
 		cylinder(d=A_D2,h=A_W2,center=true);
 		translate([DIST,0,0])cylinder(d=B_D2,h=B_W2,center=true);
+		rotate(-60)translate([-A_D2/2,0,0])cylinder(d=2,h=(A_W1+A_W2)/2,center=true);
 	}
 	cylinder(d=A_D1,h=A_W2*1.1,center=true);
 	minkowski(){cylinder(r=A_H-r,h=A_W1-r*2,center=true);sphere(r=r);}
