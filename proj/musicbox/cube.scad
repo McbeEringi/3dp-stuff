@@ -27,7 +27,8 @@ bbox_size=[53,13,25];
 screw_l=5+.5;
 snapfit_l=10;
 snapfit_asobi=.2;
-slope_top_l=0;
+slope_top_l=1;
+slope_margin=1;
 open_slit_size=[5,1];
 
 usb_size=[9,3];
@@ -36,7 +37,7 @@ usb_pos=8;
 wire_d=2.4;
 wire_pos=8;
 
-vr_size=[15,3];
+vr_size=[[10,1],[15,1.5]];
 vr_pos=-6;
 vr_inset=6;
 
@@ -72,10 +73,11 @@ module panel_w_spk(){difference(){
 module pcb_hole(d){
 	for(i=[0:3])rotate(90*i)translate([pcb_hole_dist,pcb_hole_dist])circle(d=d);
 }
-module usb(){rsq([usb_size.y+1e-9,usb_size.x],usb_size.y/2);}
+module usb(o=0){rsq([usb_size.y+o+1e-9,usb_size.x],(usb_size.y+o)/2);}
+module vr(){cylinder(d=vr_size[0].x,h=vr_size[0].y*2.1,center=true);translate([0,0,vr_size[0].y])cylinder(d=vr_size[1].x,h=vr_size[1].y);}
 module ifs(){
 	// potentiometer
-	translate([size.x/2-vr_inset,vr_pos,0])cylinder(d=vr_size.x,h=vr_size.y);
+	translate([size.x/2-vr_inset,vr_pos,0])vr();
 	// usb
 	translate([size.x/2,usb_pos,usb_size.y/2])rotate([0,90,0])linear_extrude(wall_t*2.1,center=true)usb();
 	// wire
@@ -83,7 +85,7 @@ module ifs(){
 	// sw
 	translate([0,-size.y/2,0])linear_extrude(sw_knob_out_size.y)square([sw_knob_out_size.x+sw_travel,wall_t*2],center=true);
 }
-module slope(w,h){polygon([[-h,-w-h],[0,-w],[0,w],[-h,w+h]]);}
+module slope(_h){let(h=_h+slope_margin,w=_h+slope_top_l)polygon([[-h,-w-h],[0,-w],[0,w],[-h,w+h]]);}
 module bbox2d(){rotate(-45)square([bbox_size.x,bbox_size.y],center=true);}
 
 
@@ -110,18 +112,10 @@ module master_front(){
 	}
 	
 	translate([0,0,pcb2front+pcb_t]){
-		// usb
-		let(w=usb_size.x/2+slope_top_l,h=usb_size.y/2){
-			translate([size.x/2-wall_t/2,usb_pos,h])rotate([0,-90,0])linear_extrude(wall_t,center=true)difference(){
-				slope(w,h+1);
-				usb();
-			}
-		}
-		
 		// wire
-		let(h=wire_d/2,w=h+slope_top_l){
+		let(h=wire_d/2){
 			translate([-(size.x/2-wall_t/2),wire_pos,h])rotate([0,-90,0])linear_extrude(wall_t,center=true)difference(){
-				slope(w,h+1);
+				slope(h);
 				circle(d=wire_d);
 			}
 		}
@@ -170,9 +164,9 @@ module master_body(){
 	
 		// usb
 		let(w=usb_size.x/2+slope_top_l,h=usb_size.y/2){
-			translate([size.x/2-wall_t/2,usb_pos,h])rotate([0,-90,0]){
-				linear_extrude(wall_t+snapfit_asobi*2,center=true)slope(w,h+1);
-				linear_extrude(wall_t*5,center=true){
+			translate([size.x/2-wall_t-.01,usb_pos,h])rotate([0,-90,0]){
+				linear_extrude(wall_t*2.1,center=true)usb(-.2);
+				linear_extrude(m3_d2/2){
 					usb();
 					translate([-usb_size.y/2,0])square([usb_size.y,usb_size.x],center=true);
 				}
@@ -180,13 +174,13 @@ module master_body(){
 		}
 
 		// potentiometer
-		translate([size.x/2-vr_inset,vr_pos,0])cylinder(d=vr_size.x,h=vr_size.y*2,center=true);
+		translate([size.x/2-vr_inset,vr_pos,0])vr();
 
 		// wire
-		let(h=wire_d/2,w=h+slope_top_l){
+		let(h=wire_d/2){
 			translate([-(size.x/2-wall_t/2),wire_pos,h]){
 				rotate([0,-90,0])linear_extrude(wall_t+snapfit_asobi*2,center=true){
-					slope(w,h+1);
+					slope(h);
 					circle(d=wire_d);
 				}
 			}
