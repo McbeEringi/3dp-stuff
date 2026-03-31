@@ -74,7 +74,7 @@ module pcb_hole(d){
 	for(i=[0:3])rotate(90*i)translate([pcb_hole_dist,pcb_hole_dist])circle(d=d);
 }
 module usb(o=0){rsq([usb_size.y+o+1e-9,usb_size.x],(usb_size.y+o)/2);}
-module vr(){cylinder(d=vr_size[0].x,h=vr_size[0].y*2.1,center=true);translate([0,0,vr_size[0].y])cylinder(d=vr_size[1].x,h=vr_size[1].y);}
+module vr(){linear_extrude(vr_size[0].y*2.1,center=true){square([vr_size[0].x,vr_size[0].x/2],center=true);circle(d=vr_size[0].x);}translate([0,0,vr_size[0].y])cylinder(d=vr_size[1].x,h=vr_size[1].y);}
 module ifs(){
 	// potentiometer
 	translate([size.x/2-vr_inset,vr_pos,0])vr();
