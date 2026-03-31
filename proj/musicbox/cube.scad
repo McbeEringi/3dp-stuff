@@ -222,13 +222,16 @@ module master(){
 }
 
 module sub_front(){
-	wh=pcb2front+pcb_t+wire_d/2;
+	sh=pcb2front+pcb_t;
+	wh=sh+wire_d/2;
 	panel_w_spk();
 	linear_extrude(spk_guide_h)spk_ring(spk_guide_asobi,spk_guide_t);
 	difference(){
 		union(){
-			linear_extrude(wh)wall();
+			linear_extrude(sh)wall();
 			linear_extrude(wh+snapfit_l)wall(-wall_t);
+			// wire
+			translate([0,0,sh])let(h=wire_d/2)translate([-(size.x/2-wall_t/2),-wire_pos,h])rotate([0,-90,0])linear_extrude(wall_t,center=true)slope(h);
 		}
 		translate([-size.x/2,-8,wh])rotate([0,-90,0])linear_extrude(wall_t*4.1,center=true){
 			minkowski(){circle(d=wire_d);square([snapfit_l-wire_d,1e-9]);}
@@ -238,11 +241,19 @@ module sub_front(){
 	
 }
 module sub_body_back(){
-	h=size.z-wall_t*2-(pcb2front+pcb_t+wire_d/2);
+	wh=size.z-wall_t*2-(pcb2front+pcb_t);
 	panel();
 	difference(){
-		linear_extrude(h)wall();
-		translate([size.x/2,-wire_pos,h])rotate([0,90,0])cylinder(d=wire_d,h=wall_t*2.1,center=true);
+		linear_extrude(wh)wall();
+		// wire
+		let(h=wire_d/2){
+			translate([(size.x/2-wall_t/2),-wire_pos,wh-h]){
+				rotate([0,90,0])linear_extrude(wall_t+snapfit_asobi*2,center=true){
+					slope(h);
+					circle(d=wire_d);
+				}
+			}
+		}
 	}
 }
 module sub(){
