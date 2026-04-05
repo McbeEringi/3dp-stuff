@@ -89,40 +89,45 @@ module slope(_h){let(h=_h+slope_margin,w=_h+slope_top_l)polygon([[-h,-w-h],[0,-w
 module bbox2d(){rotate(-45)square([bbox_size.x,bbox_size.y],center=true);}
 
 
-module master_front(){
+module front(master){
 	difference(){
 		union(){
 			panel_w_spk();
-			linear_extrude(pcb2front){
+			linear_extrude(pcb2front+(master?0:pcb_t)){
 				pcb_hole(m3_d2);
-				spk_ring(spk_glue,spk_glue+3);
-				difference(){
-					translate([0,-16])ring(3,6);
-					translate([0,-20.6])circle(d=2);
-					translate([+2.5,-17.4])circle(d=2);
-					translate([-2.5,-17.4])circle(d=2);
+				spk_ring(spk_glue,master?0:spk_guide_t);
+				if(master){
+					difference(){
+						translate([0,-16])ring(3,6);
+						translate([0,-20.6])circle(d=2);
+						translate([+2.5,-17.4])circle(d=2);
+						translate([-2.5,-17.4])circle(d=2);
+					}
 				}
+			}
+			if(!master){
+				linear_extrude(pcb2front+pcb_t+spk_guide_h)spk_ring(spk_guide_asobi,spk_guide_t);
 			}
 			linear_extrude(pcb2front+pcb_t)wall();
 		}
 		linear_extrude((pcb2front+pcb_t+wall_t)*2.1,center=true){
 			pcb_hole(m3_d0);
-			translate([0,16])circle(d=6.3);
+			if(master)translate([0,16])circle(d=6.3);
 		}
 	}
 	
 	translate([0,0,pcb2front+pcb_t]){
 		// wire
 		let(h=wire_d/2){
-			translate([-(size.x/2-wall_t/2),wire_pos,h])rotate([0,-90,0])linear_extrude(wall_t,center=true)difference(){
+			translate([-(size.x/2-wall_t/2),(master?1:-1)*wire_pos,h])rotate([0,-90,0])linear_extrude(wall_t,center=true)difference(){
 				slope(h);
 				circle(d=wire_d);
 			}
 		}
-		%ifs();
+		if(master)%ifs();
 	}
 }
-module master_body(){
+module body(master){
 	module lag(){difference(){
 		rsq([size.x,size.y],koma_r);
 		difference(){
@@ -141,19 +146,21 @@ module master_body(){
 				lag();
 				pcb_hole(m3_d1);
 			}
-			linear_extrude(h-snapfit_l-bbox_size.z)intersection(){
-				bbox_area();
-				difference(){
-					lag();
-					hull()pcb_hole(m3_d2);
+			if(master){
+				linear_extrude(h-snapfit_l-bbox_size.z)intersection(){
+					bbox_area();
+					difference(){
+						lag();
+						hull()pcb_hole(m3_d2);
+					}
 				}
-			}
-			linear_extrude(h-snapfit_l)intersection(){
-				bbox_area();
-				difference(){
-					lag();
-					hull()pcb_hole(m3_d2);
-					bbox2d();
+				linear_extrude(h-snapfit_l)intersection(){
+					bbox_area();
+					difference(){
+						lag();
+						hull()pcb_hole(m3_d2);
+						bbox2d();
+					}
 				}
 			}
 			difference(){
@@ -161,48 +168,48 @@ module master_body(){
 				translate([0,0,h])linear_extrude(open_slit_size.y*2,center=true)square([size.x+.01,open_slit_size.x],center=true);
 			}
 		}
-	
-		// usb
-		let(w=usb_size.x/2+slope_top_l,h=usb_size.y/2){
-			translate([size.x/2-wall_t-.01,usb_pos,h])rotate([0,-90,0]){
-				linear_extrude(wall_t*2.1,center=true)usb(-.2);
-				linear_extrude(m3_d2/2){
-					usb();
-					translate([-usb_size.y/2,0])square([usb_size.y,usb_size.x],center=true);
+		
+		if(master){
+			// usb
+			let(w=usb_size.x/2+slope_top_l,h=usb_size.y/2){
+				translate([size.x/2-wall_t-.01,usb_pos,h])rotate([0,-90,0]){
+					linear_extrude(wall_t*2.1,center=true)usb(-.2);
+					linear_extrude(m3_d2/2){
+						usb();
+						translate([-usb_size.y/2,0])square([usb_size.y,usb_size.x],center=true);
+					}
 				}
 			}
+
+			// potentiometer
+			translate([size.x/2-vr_inset,vr_pos,0])vr();
+			
+			// sw
+			translate([0,-size.y/2,0])linear_extrude(sw_knob_out_size.y*2,center=true)square([sw_knob_out_size.x+sw_travel,wall_t*2.1],center=true);
 		}
-
-		// potentiometer
-		translate([size.x/2-vr_inset,vr_pos,0])vr();
-
 		// wire
 		let(h=wire_d/2){
-			translate([-(size.x/2-wall_t/2),wire_pos,h]){
+			translate([-(size.x/2-wall_t/2),(master?1:-1)*wire_pos,h]){
 				rotate([0,-90,0])linear_extrude(wall_t+snapfit_asobi*2,center=true){
 					slope(h);
 					circle(d=wire_d);
 				}
 			}
 		}
-		
-		// sw
-		translate([0,-size.y/2,0])linear_extrude(sw_knob_out_size.y*2,center=true)square([sw_knob_out_size.x+sw_travel,wall_t*2.1],center=true);
+
 	}
-	//%ifs();
-	//%translate([0,0,h-snapfit_l])scale([1,1,-1])linear_extrude(bbox_size.z)bbox2d();
 }
-module master_back(){
+module back(master){
 	difference(){
 		panel();
-		translate([0,0,-wall_t])scale([1,-1,1])linear_extrude(1,center=true){
+		if(master)translate([0,0,-wall_t])scale([1,-1,1])linear_extrude(1,center=true){
 			scale(.2)offset(.1)import("lib/icon.svg",center=true,convexity=10);
 			translate([0,-10])text("avr musicbox",halign="center",valign="center",size=3,font="monospace");
 		}
 	}
 	linear_extrude(snapfit_l)wall(-wall_t);
 }
-module master_sw(){
+module sw(){
 	difference(){
 		linear_extrude(sw_knob_out_size.y+sw_margin)let(w=sw_knob_out_size.x+sw_travel*2+sw_margin)translate([-w/2,0])square([w,sw2wall]);
 		translate([-sw_knob_in_size.x/2,sw2wall-sw_knob_in_size.y,sw2pcb])linear_extrude(sw_knob_out_size.y+sw_margin)square(sw_knob_in_size);
@@ -213,57 +220,17 @@ module master_sw(){
 		wall_t+sw_knob_out_size.z
 	])linear_extrude(knob.y)translate([-knob.x/2,-knob.z])square([knob.x,knob.z]);
 }
-module master(){
-	a=(size.x+layout_gap)*print;
-	translate([a*0,0,wall_t])master_front();
-	translate([a*1,0,mix(pcb2front+pcb_t+wall_t,0,print)])master_body();
-	translate([a*2,0,mix(size.z-wall_t,wall_t,print)])rotate([0,mix(-180,0,print),0])master_back();
-	translate([0,mix(-(size.x/2-wall_t),-(size.x/2+layout_gap),print),mix(pcb2front+pcb_t+wall_t,0,print)])master_sw();
-}
 
-module sub_front(){
-	sh=pcb2front+pcb_t;
-	wh=sh+wire_d/2;
-	panel_w_spk();
-	linear_extrude(spk_guide_h)spk_ring(spk_guide_asobi,spk_guide_t);
-	difference(){
-		union(){
-			linear_extrude(sh)wall();
-			linear_extrude(wh+snapfit_l)wall(-wall_t);
-			// wire
-			translate([0,0,sh])let(h=wire_d/2)translate([-(size.x/2-wall_t/2),-wire_pos,h])rotate([0,-90,0])linear_extrude(wall_t,center=true)slope(h);
-		}
-		translate([-size.x/2,-8,wh])rotate([0,-90,0])linear_extrude(wall_t*4.1,center=true){
-			minkowski(){circle(d=wire_d);square([snapfit_l-wire_d,1e-9]);}
-			translate([0,-.2/2])square([snapfit_l+1,.2]);
-		}
-	}
-	
-}
-module sub_body_back(){
-	wh=size.z-wall_t*2-(pcb2front+pcb_t);
-	panel();
-	difference(){
-		linear_extrude(wh)wall();
-		// wire
-		let(h=wire_d/2){
-			translate([(size.x/2-wall_t/2),-wire_pos,wh-h]){
-				rotate([0,90,0])linear_extrude(wall_t+snapfit_asobi*2,center=true){
-					slope(h);
-					circle(d=wire_d);
-				}
-			}
-		}
-	}
-}
-module sub(){
+module box(master){
 	a=(size.x+layout_gap)*print;
-	translate([a*0,0,wall_t])sub_front();
-	translate([a*1,0,mix(size.z-wall_t,wall_t,print)])rotate([0,mix(-180,0,print),0])sub_body_back();
+	translate([a*0,0,wall_t])front(master);
+	translate([a*1,0,mix(pcb2front+pcb_t+wall_t,0,print)])body(master);
+	translate([a*2,0,mix(size.z-wall_t,wall_t,print)])rotate([0,mix(-180,0,print),0])back(master);
+	if(master)translate([0,mix(-(size.x/2-wall_t),-(size.x/2+layout_gap),print),mix(pcb2front+pcb_t+wall_t,0,print)])sw();
 }
 
 module main(){
-	master();
-	translate([0,size.y+layout_gap,0])sub();
+	box(1);
+	translate([0,size.y+layout_gap,0])box();
 }
 main();
