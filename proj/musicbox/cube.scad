@@ -43,11 +43,12 @@ vr_inset=6;
 
 sw_travel=2;
 sw_knob_in_size=[1.5+.5,2];
-sw_knob_out_size=[3,3,1];
+sw_knob_out_size=[3,3,1.5];
 sw_knob_out_asobi=.3;
-sw2wall=2.75;
+sw2wall=2.6;
 sw2pcb=1.5;
 sw_margin=1;
+sw_pad_r=1.5;
 
 layout_gap=5;
 
@@ -212,7 +213,8 @@ module back(master){
 module sw(){
 	difference(){
 		linear_extrude(sw_knob_out_size.y+sw_margin)let(w=sw_knob_out_size.x+sw_travel*2+sw_margin)translate([-w/2,0])square([w,sw2wall]);
-		translate([-sw_knob_in_size.x/2,sw2wall-sw_knob_in_size.y,sw2pcb])linear_extrude(sw_knob_out_size.y+sw_margin)square(sw_knob_in_size);
+		translate([-sw_knob_in_size.x/2,sw2wall-sw_knob_in_size.y+1e-3,sw2pcb])linear_extrude(sw_knob_out_size.y+sw_margin)square(sw_knob_in_size);
+		translate([0,sw2wall,-1e-3])minkowski(){cylinder(sw_pad_r,sw_pad_r,0);cube([1,1e-9,1e-9],center=true);}
 	}
 	let(knob=[
 		sw_knob_out_size.x-sw_knob_out_asobi,
