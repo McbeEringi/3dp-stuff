@@ -99,7 +99,10 @@ module stand(){
 				translate([0,0,-.1])linear_extrude(size-thick+.1)rsqn(0);
 			}
 		}
-		translate([0,0,-size/2])for(t=[60,180,-60])rotate([45,0,t])cylinder(d=size*3/4,h=size*2);
+		difference(){
+			translate([0,0,-size/2])for(t=[60,180,-60])rotate([45,0,t])cylinder(d=size*.8,h=size*2);
+			cylinder(r=size,h=5);
+		}
 	}
 }
 
