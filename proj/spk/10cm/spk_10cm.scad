@@ -89,12 +89,29 @@ module back(){
 	}
 }
 
+module stand(){
+	difference(){
+		linear_extrude(size)difference(){circle(d=size);circle(d=size-2*2);}
+		rotate([45,-acos(sqrt(2)/sqrt(3)),30]){
+			//%cube(size);
+			translate([size/2,size/2,thick]){
+				panel();
+				translate([0,0,-.1])linear_extrude(size-thick+.1)rsqn(0);
+			}
+		}
+		translate([0,0,-size/2])for(t=[60,180,-60])rotate([45,0,t])cylinder(d=size*3/4,h=size*2);
+	}
+}
+
 
 module main(){
-	translate([0,0,mix(size-thick,0,print)])rotate([mix(180,0,print),0,0]){
-		translate([mix(0,size*1.1,print),0,mix(0,thick,print)])front();
-		body();
+	rotate([mix(45,0,print),mix(-acos(sqrt(2)/sqrt(3)),0,print),mix(30,0,print)])translate([mix(size/2,0,print),mix(size/2,0,print),0]){
+		translate([0,0,mix(size-thick,0,print)])rotate([mix(180,0,print),0,0]){
+			translate([mix(0,size*1.1,print),0,mix(0,thick,print)])front();
+			body();
+		}
+		translate([mix(0,size*2.2,print),0,thick])back();
 	}
-	translate([mix(0,size*2.2,print),0,thick])back();
+	translate([mix(0,size*3.3,print),0,0])stand();
 }
 main();
