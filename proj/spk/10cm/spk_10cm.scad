@@ -1,9 +1,10 @@
-$fa=5;$fs=.2;
+$fa=2;$fs=.2;
 include <lib/fn.scad>
 
 print=$preview?0:1;
 
 size=120;
+stand_size=100;
 koma=3;
 thick=5;
 rnd=20;
@@ -22,7 +23,7 @@ module koma(r=rnd,a=koma){
 	cylinder(a,r,r-a/sqrt(3));
 }
 module panel()scale(-1)minkowski(){
-	linear_extrude(thick-koma)square(120-rnd*2,center=true);
+	linear_extrude(thick-koma)square(size-rnd*2,center=true);
 	koma();
 }
 module rsqn(n,d=0){
@@ -91,17 +92,29 @@ module back(){
 
 module stand(){
 	difference(){
-		linear_extrude(size)difference(){circle(d=size);circle(d=size-2*2);}
+		union(){
+			difference(){
+				cylinder(d=stand_size,h=size);
+				cylinder(d=stand_size-2*2,h=stand_size*2,center=true);
+				difference(){
+					translate([0,0,-stand_size/2])for(t=[60,180,-60])rotate([45,0,t])cylinder(d=stand_size*.8,h=stand_size*2);
+					cylinder(r=stand_size,h=5);
+				}
+			}
+			intersection(){
+				for(t=[60,180,-60])rotate(t)translate([0,stand_size/2-2,0])difference(){
+					scale([1,size/stand_size,1])skew(yz=15)cylinder(d=stand_size*.2,h=stand_size*.5);
+					translate([0,-5,0])cylinder(d=10,h=3*2,center=true);
+				}
+				cylinder(d=stand_size,h=stand_size);
+			}
+		}
 		rotate([45,-acos(sqrt(2)/sqrt(3)),30]){
-			//%cube(size);
+			%cube(size);
 			translate([size/2,size/2,thick]){
 				panel();
 				translate([0,0,-.1])linear_extrude(size-thick+.1)rsqn(0);
 			}
-		}
-		difference(){
-			translate([0,0,-size/2])for(t=[60,180,-60])rotate([45,0,t])cylinder(d=size*.8,h=size*2);
-			cylinder(r=size,h=5);
 		}
 	}
 }

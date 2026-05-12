@@ -14,3 +14,14 @@ _tan=function(x)tan(r2d(x));
 _atan=function(x)d2r(atan(x));
 
 rot=function(p,t)let(s=_sin(t),c=_cos(t))[c*p.x-s*p.y,s*p.x+c*p.y];
+
+module skew(xy=0,xz=0,yx=0,yz=0,zx=0,zy=0){
+	matrix=[
+		[1,tan(xy),tan(xz),0],
+		[tan(yx),1,tan(yz),0],
+		[tan(zx),tan(zy),1,0],
+		[0,0,0,1]
+	];
+	multmatrix(matrix)
+	children();
+}
