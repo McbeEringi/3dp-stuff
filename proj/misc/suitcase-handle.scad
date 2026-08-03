@@ -16,7 +16,7 @@ hole2=zh-25.7;
 notch_d=16;
 notch_zr=12;
 
-pind=3.1;
+pind=3.3;
 pinz_up=33.5;
 pinz_down=28;
 pin_travel=pinz_up-pinz_down;
@@ -24,9 +24,10 @@ btnw=20;
 
 pinplate_h=8;
 gap=.3;
+gapoh=1.5;
 
 spring_t=1;
-spring_r=50;
+spring_r=30;
 
 
 module pipebb(){
@@ -48,6 +49,7 @@ module joiner(){
 			[w1/4,-h/2+.5],
 			[w1/2,-h/2],
 			[w2/2,h/2],
+			[0,h/2+.2],
 			[-w2/2,h/2]
 		]);
 		translate([0,0,hole1])rotate([90,0,0])cylinder(d=2.9,h=h/2);
@@ -59,8 +61,6 @@ module half(inv){
 	difference(){
 		union(){
 			translate([d/2,0,0])joiner();
-			//notch
-			//translate([0,0,zh])rotate([0,90,0])linear_extrude(d/2)scale([2*notch_zr/notch_d,1])circle(d=notch_d);
 			//grip
 			difference(){
 				translate([0,0,zh])rotate([0,90,0])linear_extrude(d/2)circle(d=h+t*2);
@@ -77,17 +77,18 @@ module half(inv){
 		//pinhole
 		translate([d/2,0,0])cylinder(d=pind,h=pinz_up);
 		//btn key
-		translate([0,0,zh])linear_extrude(h/2+t)square([btnw,pind+gap],center=true);
+		translate([0,0,zh])linear_extrude(h/2+t)square([btnw,pind+gapoh],center=true);
 		//btn notch
 		translate([0,0,zh+h/2+t])rotate([90,0,0])linear_extrude(h+t*2,center=true)scale([1,2*(pin_travel+1)/btnw])circle(d=btnw);
 		
 		translate([0,0,pinz_up]){
-			linear_extrude(pinplate_h)square([d+pind+gap,pind+gap],center=true);
-			scale([1,1,-1])linear_extrude(pin_travel)square([d+pind+gap,pind+gap],center=true);
+			linear_extrude(pinplate_h)square([d+pind+gap,pind+gapoh],center=true);
+			scale([1,1,-1])linear_extrude(pin_travel)square([d+pind+gap,pind+gapoh],center=true);
 		}
 		//insert window
-		if(!inv)translate([0,0,pinz_down]){
-			linear_extrude(zh+h/2+t-pinz_up+gap)square([d*2,pind+gap],center=true);
+		//if(!inv)
+		translate([0,0,pinz_down]){
+			linear_extrude(zh+h/2+t-pinz_up-spring_t+gap)square([d*2,pind+gapoh],center=true);
 		}
 	}
 }
