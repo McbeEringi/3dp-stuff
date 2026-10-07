@@ -21,11 +21,11 @@ module panel(size=[50,50],r=10,bevel=2,thick=3,bevel_angle=60){
 //panel(body_size,body_r,body_bevel,3,body_bevel_angle);
 
 difference(){
-	linear_extrude(body_height)rsq(body_size);
+	linear_extrude(body_height)rsq(body_size,body_r);
 	translate([0,0,body_height-.5])linear_extrude(1){
 		translate([-17,17,0])scale(.3)offset(.5)import("lib/icon.svg",center=true);
-		translate([0,22,0])text("avr",size=4,font="monospace:style=bold");
-		translate([0,17,0])text("musicbox",size=4,font="monospace:style=bold");
-		translate([0,8,0])text("slim",size=6,font="monospace:style=bold italic");
+		translate([-17,-12,0])text("avr",size=4,halign="center",font="monospace:style=bold");
+		translate([-17,-17,0])text("musicbox",size=4,halign="center",font="monospace:style=bold");
+		translate([-17,-26,0])text("slim",size=6,halign="center",font="monospace:style=bold italic");
 	}
 }
