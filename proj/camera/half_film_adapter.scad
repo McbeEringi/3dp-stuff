@@ -54,8 +54,8 @@ difference(){
 
 translate([d_outer*1.5,0,0])difference(){
 	linear_extrude(2)minkowski(){
-		square(d_outer-10*2,center=true);
-		circle(10);
+		square(d_outer-5*2,center=true);
+		circle(5);
 	}
 
 	translate([0,0,1])minkowski(){
